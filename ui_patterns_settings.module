@@ -1,0 +1,66 @@
+<?php
+
+use Drupal\ui_patterns_settings\UiPatternsSettings;
+use Drupal\ui_patterns\UiPatterns;
+
+/**
+ * Implements hook_ui_patterns_form_alter().
+ */
+function ui_patterns_settings_ui_patterns_form_alter(&$form, $definition, $configuration) {
+  ui_patterns_settings_build_setting_form($form, $definition, $configuration);
+}
+
+/**
+ * Build pattern settings form.
+ *
+ * @param array $form
+ *   Form array.
+ * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
+ *   The pattern definition.
+ * @param array $configuration
+ *   Configurations array.
+ */
+function ui_patterns_settings_build_setting_form(array &$form, $definition, $configuration) {
+  $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+  if (!empty($settings)) {
+    foreach ($settings as $key => $setting) {
+      if (empty($setting->getType()) || !$setting->isFormVisible()) {
+        continue;
+      }
+
+      if (!isset($form['pattern']['settings'])) {
+        $form['pattern']['settings'] = [
+          '#type' => 'fieldset',
+          '#title' => t('Settings'),
+        ];
+      }
+      $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : "";
+      $settingType = UiPatternsSettings::createSettingType($setting);
+      $form['pattern']['settings'] += $settingType->buildConfigurationForm([], $setting_value);
+    }
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function ui_patterns_settings_element_info_alter(array &$info) {
+  if (isset($info['pattern'])) {
+    $info['pattern']['#pre_render'][] = ["Drupal\ui_patterns_settings\Element\PatternSettings", "processSettings"];
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function ui_patterns_settings_theme_registry_alter(&$theme_registry) {
+  foreach (UiPatterns::getManager()->getPatterns() as $pattern) {
+    $definition = $pattern->getPluginDefinition();
+    if (isset($theme_registry['pattern_' . $definition->id()])) {
+      $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+      foreach ($settings as $key => $setting) {
+        $theme_registry['pattern_' . $definition->id()]['variables'][$key] = NULL;
+      }
+    }
+  }
+}

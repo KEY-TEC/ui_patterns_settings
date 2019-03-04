@@ -1,7 +1,7 @@
-name: UI Patterns
+name: UI Patterns Settings
 type: module
-description: UI patterns
+description: Configure patterns with settings
 core: 8.x
 package: User interface
 dependencies:
-  - drupal:system (>=8.3.0)
+  - drupal:ui_patterns (>=8.3.0)

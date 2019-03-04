@@ -2,6 +2,8 @@
 
 namespace Drupal\ui_patterns_settings\Definition;
 
+use Drupal\ui_patterns\Definition\ArrayAccessDefinitionTrait;
+
 /**
  * Class PatternDefinitionSetting.
  *

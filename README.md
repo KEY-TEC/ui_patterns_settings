@@ -1,2 +1,2 @@
-# UI Patterns Setting
+# UI Patterns Settings
 

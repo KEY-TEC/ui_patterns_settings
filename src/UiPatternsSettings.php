@@ -3,6 +3,8 @@
 namespace Drupal\ui_patterns_settings;
 
 use Drupal\Core\Entity\Entity;
+use Drupal\ui_patterns\Definition\PatternDefinition;
+use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 
 /**
@@ -22,6 +24,7 @@ class UiPatternsSettings {
     return \Drupal::service('plugin.manager.ui_patterns_settings');
   }
 
+
   /**
    * Preprocess setiting variables. Called before rendered.
    *
@@ -37,25 +40,47 @@ class UiPatternsSettings {
    */
   public static function preprocess($pattern_id, array $settings, Entity $entity = NULL) {
     $processed_settings = [];
-    $pattern = UiPatterns::getPatternDefinition($pattern_id);
+    $definition = UiPatterns::getPatternDefinition($pattern_id);
     $context = [];
     $context['entity'] = $entity;
-    $pattern_settings = $pattern->getSettings();
-    foreach ($pattern_settings as $key => $settingDefinition) {
-      if ($settingDefinition->getForcedValue()) {
-        $value = $settingDefinition->getForcedValue();
+    $settings_definition = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    foreach ($settings_definition as $key => $setting_definition) {
+      if ($setting_definition->getForcedValue()) {
+        $value = $setting_definition->getForcedValue();
       }
       elseif (isset($settings[$key])) {
         $value = $settings[$key];
       }
       else {
-        $value = $settingDefinition->getDefaultValue();
+        $value = $setting_definition->getDefaultValue();
       }
-      $settingType = UiPatternsSettings::createSettingType($settingDefinition);
+      $settingType = UiPatternsSettings::createSettingType($setting_definition);
       $processed_settings[$key] = $settingType->preprocess($value, $context);
     }
     return $processed_settings;
 
+  }
+
+  /**
+   * Get setting definitions for a pattern definition.
+   *
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $defintion
+   *   The definition.
+   *
+   * @return \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[]
+   *   Setting pattern definitons.
+   */
+  public static function getPatternDefinitionSettings(PatternDefinition $definition) {
+    $additional = $definition->getAdditional();
+    $settings_ary = isset($additional['settings']) ? $additional['settings'] : [];
+    $settings = [];
+    if (!empty($settings_ary)) {
+      foreach ($settings_ary as $key => $setting_ary) {
+        $settings[$key] = new PatternDefinitionSetting($key, $setting_ary);
+
+      }
+    }
+    return $settings;
   }
 
   /**

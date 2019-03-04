@@ -1,14 +1,4 @@
 services:
-  plugin.manager.ui_patterns:
-    class: Drupal\ui_patterns_settings\UiPatternsManager
-    arguments: ['@container.namespaces', '@module_handler', '@theme_handler', '@cache.discovery']
-  plugin.manager.ui_patterns_source:
-    class: Drupal\ui_patterns_settings\UiPatternsSourceManager
-    parent: default_plugin_manager
   plugin.manager.ui_patterns_settings:
     class: Drupal\ui_patterns_settings\UiPatternsSettingsManager
     arguments: ['@container.namespaces', '@module_handler', '@cache.discovery']
-  ui_patterns.twig.extension:
-    class: Drupal\ui_patterns_settings\Template\TwigExtension
-    tags:
-      - { name: twig.extension }
