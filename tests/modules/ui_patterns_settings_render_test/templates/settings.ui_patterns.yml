@@ -1,0 +1,16 @@
+foo_settings:
+  label: Foo settings
+  fields:
+    dummy:
+      type: text
+      label: Dummy
+  variants:
+    default:
+      label: Default
+  settings:
+    textfield:
+      type: textfield
+      label: Textfield
+    boolean:
+      type: boolean
+      label: Boolean

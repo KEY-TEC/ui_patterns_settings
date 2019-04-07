@@ -6,21 +6,7 @@ use Drupal\ui_patterns\UiPatterns;
 /**
  * Implements hook_ui_patterns_form_alter().
  */
-function ui_patterns_settings_ui_patterns_form_alter(&$form, $definition, $configuration) {
-  ui_patterns_settings_build_setting_form($form, $definition, $configuration);
-}
-
-/**
- * Build pattern settings form.
- *
- * @param array $form
- *   Form array.
- * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
- *   The pattern definition.
- * @param array $configuration
- *   Configurations array.
- */
-function ui_patterns_settings_build_setting_form(array &$form, $definition, $configuration) {
+function ui_patterns_settings_ui_patterns_layout_form_alter(&$form, $definition, $configuration) {
   $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
   if (!empty($settings)) {
     foreach ($settings as $key => $setting) {
@@ -28,16 +14,66 @@ function ui_patterns_settings_build_setting_form(array &$form, $definition, $con
         continue;
       }
 
-      if (!isset($form['pattern']['settings'])) {
-        $form['pattern']['settings'] = [
+      if (!isset($form['settings'])) {
+        $form['settings'] = [
           '#type' => 'fieldset',
           '#title' => t('Settings'),
         ];
       }
       $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : "";
       $settingType = UiPatternsSettings::createSettingType($setting);
-      $form['pattern']['settings'] += $settingType->buildConfigurationForm([], $setting_value);
+      $form['settings'] += $settingType->buildConfigurationForm([], $setting_value);
     }
+  }
+}
+
+/**
+ * Build pattern settings for display form.
+ *
+ * @param array $form
+ *   Form array.
+ * @param array $configuration
+ *   Configurations array.
+ */
+function ui_patterns_settings_ui_patterns_display_form_alter(array &$form, $configuration) {
+  foreach (UiPatterns::getPatternDefinitions() as $pattern_id => $definition) {
+    $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    if (!empty($settings)) {
+      foreach ($settings as $key => $setting) {
+        if (empty($setting->getType()) || !$setting->isFormVisible()) {
+          continue;
+        }
+        if (!isset($form['pattern_settings'][$pattern_id])) {
+          $form['pattern_settings'][$pattern_id] = [
+            '#type' => 'fieldset',
+            '#title' => t('Settings'),
+            '#states' => [
+              'visible' => [
+                'select[id="patterns-select"]' => ['value' => $pattern_id],
+              ],
+            ],
+          ];
+        }
+        $fieldset = &$form['pattern_settings'][$pattern_id];
+        $settingType = UiPatternsSettings::createSettingType($setting);
+        $setting_value = isset($configuration['pattern_settings'][$pattern_id][$key]) ? $configuration['pattern_settings'][$pattern_id][$key] : "";
+        $fieldset += $settingType->buildConfigurationForm([], $setting_value);
+      }
+    }
+  }
+}
+
+/**
+ * Preprocess hook.
+ *
+ * @param array $variables
+ *   Theme variables.
+ */
+function ui_patterns_settings_preprocess_field__pattern_ds_field_template(array &$variables) {
+  $pattern_id = $variables['ds-config']['settings']['pattern'];
+  $settings = isset($variables['ds-config']['settings']['pattern_settings'][$pattern_id]) ? $variables['ds-config']['settings']['pattern_settings'][$pattern_id] : NULL;
+  foreach ($variables['items'] as $delta => $item) {
+    $variables['pattern']['pattern_' . $delta]['#settings'] = $settings;
   }
 }
 
@@ -46,7 +82,10 @@ function ui_patterns_settings_build_setting_form(array &$form, $definition, $con
  */
 function ui_patterns_settings_element_info_alter(array &$info) {
   if (isset($info['pattern'])) {
-    $info['pattern']['#pre_render'][] = ["Drupal\ui_patterns_settings\Element\PatternSettings", "processSettings"];
+    $info['pattern']['#pre_render'][] = [
+      "Drupal\ui_patterns_settings\Element\PatternSettings",
+      "processSettings",
+    ];
   }
 }
 
