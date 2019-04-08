@@ -103,3 +103,11 @@ function ui_patterns_settings_theme_registry_alter(&$theme_registry) {
     }
   }
 }
+
+/**
+ * Implements hook_field_group_build_pre_render_alter().
+ */
+function ui_patterns_settings_field_group_pre_render_alter(&$element, $group, $rendering_object) {
+  $pattern_id = isset($group->format_settings['pattern']) ? $group->format_settings['pattern'] : NULL;
+  $element['#settings'] = isset($group->format_settings['pattern_settings'][$pattern_id]) ? $group->format_settings['pattern_settings'][$pattern_id] : NULL;
+}

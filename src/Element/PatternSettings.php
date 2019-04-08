@@ -68,6 +68,4 @@ class PatternSettings  {
       return FALSE;
     }
   }
-
-
 }
