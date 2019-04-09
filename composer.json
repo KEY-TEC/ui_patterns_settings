@@ -55,11 +55,6 @@
   },
   "extra": {
     "enable-patching": true,
-    "patches": {
-      "drupal/ui_patterns": {
-        "Add form alter hooks.": "https://patch-diff.githubusercontent.com/raw/nuvoleweb/ui_patterns/pull/254.patch?v=1"
-      }
-    },
     "composer-exit-on-patch-failure": true,
     "installer-paths": {
       "build/core": ["type:drupal-core"],

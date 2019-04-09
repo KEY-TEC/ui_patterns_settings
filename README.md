@@ -61,6 +61,16 @@ Sample card pattern template:
   </div>
 </a>
 ```
+Add patch:
+```
+  "patches": {
+      "drupal/ui_patterns": {
+        "Add form alter hooks.": "https://patch-diff.githubusercontent.com/raw/nuvoleweb/ui_patterns/pull/254.patch?v=1"
+      }
+    },
+
+```
+
 **Sample Images:**
 Settings in manage display:
 ![pattern settings](images/settings.png)
