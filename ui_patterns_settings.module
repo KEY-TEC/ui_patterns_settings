@@ -3,102 +3,22 @@
 use Drupal\ui_patterns_settings\UiPatternsSettings;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns\Definition\PatternDefinition;
+use Drupal\ui_patterns_settings\Form\SettingsFormBuilder;
 
 /**
  * Implements hook_ui_patterns_form_alter().
  */
 function ui_patterns_settings_ui_patterns_layout_form_alter(&$form, PatternDefinition $definition, $configuration) {
-  $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
-  if (!empty($settings)) {
-    foreach ($settings as $key => $setting) {
-      if (empty($setting->getType()) || !$setting->isFormVisible()) {
-        continue;
-      }
-
-      if (!isset($form['settings'])) {
-        $form['settings'] = [
-          '#type' => 'fieldset',
-          '#title' => t('Settings'),
-        ];
-      }
-      $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : "";
-      $settingType = UiPatternsSettings::createSettingType($setting);
-      $form['settings'] += $settingType->buildConfigurationForm([], $setting_value);
-    }
-    ui_patterns_settings_handle_variants("select[id='edit-layout-configuration-pattern-variant']", $form['settings'], $definition);
-  }
+  SettingsFormBuilder::layoutForm($form, $definition, $configuration);
 }
 
 /**
- * Build pattern settings for display form.
- *
- * @param array $form
- *   Form array.
- * @param array $configuration
- *   Configurations array.
+ * Implements hook_ui_patterns_display_form_alter().
  */
 function ui_patterns_settings_ui_patterns_display_form_alter(array &$form, $configuration) {
-  foreach (UiPatterns::getPatternDefinitions() as $pattern_id => $definition) {
-    $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
-    if (!empty($settings)) {
-      foreach ($settings as $key => $setting) {
-        if (empty($setting->getType()) || !$setting->isFormVisible()) {
-          continue;
-        }
-        if (!isset($form['pattern_settings'][$pattern_id])) {
-          $form['pattern_settings'][$pattern_id] = [
-            '#type' => 'fieldset',
-            '#title' => t('Settings'),
-            '#states' => [
-              'visible' => [
-                'select[id="patterns-select"]' => ['value' => $pattern_id],
-              ],
-            ],
-          ];
-        }
-        $fieldset = &$form['pattern_settings'][$pattern_id];
-        $settingType = UiPatternsSettings::createSettingType($setting);
-        $setting_value = isset($configuration['pattern_settings'][$pattern_id][$key]) ? $configuration['pattern_settings'][$pattern_id][$key] : "";
-        $fieldset += $settingType->buildConfigurationForm([], $setting_value);
-      }
-      ui_patterns_settings_handle_variants("select[id*='edit-form-settings-pattern-variant']", $fieldset, $definition);
-    }
-
-  }
+  SettingsFormBuilder::displayForm($form, $configuration);
 }
 
-/**
- * Hide all settings which are configured by the variant.
- *
- * @param $select_selector
- *   The id of the variant select field.
- * @param $fieldset
- *  The fieldset.
- * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
- *  The pattern definition.
- */
-function ui_patterns_settings_handle_variants($select_selector, &$fieldset, PatternDefinition $definition) {
-  $variants = $definition->getVariants();
-  foreach ($variants as $variant) {
-    $variant_ary = $variant->toArray();
-    $settings = isset($variant_ary['settings']) ? $variant_ary['settings'] : [];
-    foreach ($settings as $name => $setting) {
-      if (isset($fieldset[$name])) {
-        $fieldset[$name]['#states']['invisible'][$select_selector] = ['value' => $variant->getName()];
-        $setting_value = is_string($setting) ? $setting : implode(" ", $setting);
-        $fieldset[$name . '_variant_' . $variant->getName()] = [
-          '#type' => 'item',
-          '#title' => "[".$name . ': ' . $setting_value . "]",
-          '#states' => [
-            'visible' => [
-              $select_selector => ['value' => $variant->getName()],
-            ],
-          ],
-        ];
-      }
-    }
-  }
-}
 
 /**
  * Preprocess hook.

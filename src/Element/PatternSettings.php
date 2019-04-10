@@ -22,21 +22,7 @@ class PatternSettings  {
    *   Render array.
    */
   public static function processPreviewSettings(array $element) {
-    $pattern_id = $element['#id'];
-    $definition = UiPatterns::getManager()->getDefinition($pattern_id);
-    $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
-    foreach ($settings as $name => $setting) {
-      $key = '#' . $name;
-      if (!empty($setting->getDefaultValue())) {
-        $element[$key] = $setting->getDefaultValue();
-      }
-
-      if (!empty($setting->getPreview())) {
-        $element[$key] = $setting->getPreview();
-      }
-    }
-    $element['#settings'][] = ['#markup'=>'XXX'];
-    return $element;
+    return PatternSettings::processSettings($element, TRUE);
   }
 
   /**
@@ -48,7 +34,7 @@ class PatternSettings  {
    * @return array
    *   Render array.
    */
-  public static function processSettings(array $element) {
+  public static function processSettings(array $element, $preview = FALSE) {
     // Make sure we don't render anything in case fields are empty.
     if (self::hasSettings($element)) {
       $settings = isset($element['#settings']) ? $element['#settings'] : [];
@@ -58,8 +44,8 @@ class PatternSettings  {
       $context = $element['#context'];
       $pattern_id = $element['#id'];
       $entity = $context->getProperty('entity');
-
-      $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $entity);
+      $variant = isset($element['#variant']) ? $element['#variant'] : NULL;
+      $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $variant, $preview, $entity);
       unset($element['#settings']);
       foreach ($settings as $name => $setting) {
         $key = '#' . $name;

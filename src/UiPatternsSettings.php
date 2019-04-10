@@ -32,13 +32,18 @@ class UiPatternsSettings {
    *   Pattern ID for which to preprocess.
    * @param array $settings
    *   The stored settings.
+   * @param string $variant
+   *   The variant.
+   * @param bool $preview
+   *   Is preview.
+
    * @param \Drupal\Core\Entity\Entity $entity
    *   The entity of the pattern. Useful for dynamic settings.
    *
    * @return array
    *   The processed settings.
    */
-  public static function preprocess($pattern_id, array $settings, Entity $entity = NULL) {
+  public static function preprocess($pattern_id, array $settings, $variant, $preview, Entity $entity = NULL) {
     $processed_settings = [];
     $definition = UiPatterns::getPatternDefinition($pattern_id);
     $context = [];
@@ -51,8 +56,20 @@ class UiPatternsSettings {
       elseif (isset($settings[$key])) {
         $value = $settings[$key];
       }
+      elseif ($preview && !empty($setting_definition->getPreview())) {
+        $value = $setting_definition->getPreview();
+      }
       else {
         $value = $setting_definition->getDefaultValue();
+      }
+      if ($variant != 'default' && $variant != NULL) {
+        $variant_ob = $definition->getVariant($variant);
+        if ($variant_ob != NULL) {
+          $variant_ary = $variant_ob->toArray();
+          if (isset($variant_ary['settings']) && isset($variant_ary['settings'][$key])) {
+            $value = $variant_ary['settings'][$key];
+          }
+        }
       }
       $settingType = UiPatternsSettings::createSettingType($setting_definition);
       $processed_settings[$key] = $settingType->preprocess($value, $context);
