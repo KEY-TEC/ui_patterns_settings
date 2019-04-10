@@ -38,12 +38,14 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['name'] = is_numeric($name) ? $value : $name;
       $this->definition['label'] = $value;
       $this->definition['type'] = 'textfield';
+      $this->definition['preview'] = NULL;
     }
     else {
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
       $this->definition['label'] = $value['label'];
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
+      $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
       $this->definition = $value + $this->definition;
     }
@@ -128,6 +130,16 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function getForcedValue() {
     return $this->definition['forced_value'];
+  }
+
+  /**
+   * Get preview property.
+   *
+   * @return mixed
+   *   Property value.
+   */
+  public function getPreview() {
+    return $this->definition['preview'];
   }
 
   /**

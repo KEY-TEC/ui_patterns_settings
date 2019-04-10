@@ -13,6 +13,33 @@ use Drupal\ui_patterns_settings\UiPatternsSettings;
 class PatternSettings  {
 
   /**
+   * Process settings for preview.
+   *
+   * @param array $element
+   *   Render array.
+   *
+   * @return array
+   *   Render array.
+   */
+  public static function processPreviewSettings(array $element) {
+    $pattern_id = $element['#id'];
+    $definition = UiPatterns::getManager()->getDefinition($pattern_id);
+    $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    foreach ($settings as $name => $setting) {
+      $key = '#' . $name;
+      if (!empty($setting->getDefaultValue())) {
+        $element[$key] = $setting->getDefaultValue();
+      }
+
+      if (!empty($setting->getPreview())) {
+        $element[$key] = $setting->getPreview();
+      }
+    }
+    $element['#settings'][] = ['#markup'=>'XXX'];
+    return $element;
+  }
+
+  /**
    * Process settings.
    *
    * @param array $element
@@ -31,6 +58,7 @@ class PatternSettings  {
       $context = $element['#context'];
       $pattern_id = $element['#id'];
       $entity = $context->getProperty('entity');
+
       $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $entity);
       unset($element['#settings']);
       foreach ($settings as $name => $setting) {

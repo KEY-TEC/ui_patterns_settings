@@ -7,10 +7,16 @@ foo_settings:
   variants:
     default:
       label: Default
+    blue:
+      label: Blue
+      settings:
+        textfield: blue
   settings:
     textfield:
       type: textfield
       label: Textfield
+      preview: text preview
     boolean:
       type: boolean
       label: Boolean
+      preview: 1
