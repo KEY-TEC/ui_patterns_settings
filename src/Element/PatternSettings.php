@@ -25,8 +25,16 @@ class PatternSettings  {
     // Make sure we don't render anything in case fields are empty.
     if (self::hasSettings($element)) {
       $settings = isset($element['#settings']) ? $element['#settings'] : [];
+      // Handling display suite pattern.
       if (empty($settings)) {
         $settings = isset($element['#ds_configuration']['layout']['settings']['pattern']['settings']) ? $element['#ds_configuration']['layout']['settings']['pattern']['settings'] : [];
+      }
+      // Handling layout builder.
+      if (empty($settings) && isset($element['#layout'])) {
+        /** @var \Drupal\ui_patterns_layout_builder\Plugin\Layout\PatternLayoutBuilder $layout */
+        $layout = $element['#layout'];
+        $configuration = $layout->getConfiguration();
+        $settings = isset($configuration['pattern']['settings']) ? $configuration['pattern']['settings'] : [];
       }
       $context = $element['#context'];
       $pattern_id = $element['#id'];
