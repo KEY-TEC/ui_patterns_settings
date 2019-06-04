@@ -3,6 +3,8 @@
 namespace Drupal\ui_patterns_settings;
 
 use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
