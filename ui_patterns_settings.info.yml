@@ -4,4 +4,5 @@ description: Configure patterns with settings
 core: 8.x
 package: User interface
 dependencies:
-  - drupal:ui_patterns
+  - ui_patterns:ui_patterns
+  - token:token
