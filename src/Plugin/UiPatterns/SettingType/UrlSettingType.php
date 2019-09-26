@@ -20,6 +20,9 @@ class UrlSettingType extends TokenSettingType {
    */
   public function settingsPreprocess($value, array $context, PatternDefinitionSetting $def) {
     $value = parent::settingsPreprocess($value, $context, $def);
+    if (empty($value)) {
+      return "";
+    }
     try {
       $url = Url::fromUri($value)->toString();
     }
