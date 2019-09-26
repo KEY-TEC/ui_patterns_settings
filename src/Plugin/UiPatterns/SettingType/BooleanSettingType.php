@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
+use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 
 /**
@@ -17,8 +18,7 @@ class BooleanSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, $value) {
-    $def = $this->getPatternSettingDefinition();
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $value = $this->getValue($value);
     $form[$def->getName()] = [
       '#type' => 'select',

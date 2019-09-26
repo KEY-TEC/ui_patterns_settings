@@ -16,6 +16,14 @@ foo_settings:
       type: textfield
       label: Textfield
       preview: text preview
+    token:
+      type: token
+      label: Token
+      preview: Token
+    url:
+      type: url
+      label: Url
+      preview: Url
     boolean:
       type: boolean
       label: Boolean

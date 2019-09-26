@@ -2,7 +2,6 @@
 
 namespace Drupal\ui_patterns_settings;
 
-use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
@@ -25,9 +24,8 @@ class UiPatternsSettings {
     return \Drupal::service('plugin.manager.ui_patterns_settings');
   }
 
-
   /**
-   * Preprocess setiting variables. Called before rendered.
+   * Preprocess all settings variables.
    *
    * @param string $pattern_id
    *   Pattern ID for which to preprocess.
@@ -37,7 +35,6 @@ class UiPatternsSettings {
    *   The variant.
    * @param bool $preview
    *   Is preview.
-
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity of the pattern. Useful for dynamic settings.
    *
@@ -50,6 +47,7 @@ class UiPatternsSettings {
     $context = [];
     $context['entity'] = $entity;
     $settings_definition = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    $bind = NULL;
     foreach ($settings_definition as $key => $setting_definition) {
       if ($setting_definition->getForcedValue()) {
         $value = $setting_definition->getForcedValue();
@@ -82,7 +80,7 @@ class UiPatternsSettings {
   /**
    * Get setting definitions for a pattern definition.
    *
-   * @param \Drupal\ui_patterns\Definition\PatternDefinition $defintion
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
    *   The definition.
    *
    * @return \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[]

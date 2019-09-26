@@ -4,6 +4,7 @@ namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Template\Attribute;
+use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 
 /**
@@ -19,8 +20,7 @@ class AttributesSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, $value) {
-    $def = $this->getPatternSettingDefinition();
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $value = $this->getValue($value);
     $description = $this->getDescription() != NULL ? $this->getDescription() : $this->t('E.g. role="navigation" class="class-1"');
     $form[$def->getName()] = [
@@ -37,6 +37,7 @@ class AttributesSettingType extends PatternSettingTypeBase {
    * {@inheritdoc}
    */
   public function preprocess($value, array $context) {
+    $value = parent::preprocess($value, $context);
     $parse_html = '<div ' . $value . '></div>';
     $attributes = [];
     foreach (HTML::load($parse_html)->getElementsByTagName('div') as $div) {

@@ -2,14 +2,15 @@
 
 namespace Drupal\ui_patterns_settings\Plugin;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for UI Patterns Setting plugins.
  */
-abstract class PatternSettingTypeBase extends PluginBase implements ConfigurablePluginInterface, PatternSettingTypeInterface {
+abstract class PatternSettingTypeBase extends PluginBase implements ConfigurableInterface, PatternSettingTypeInterface {
 
   /**
    * Return pattern definitions for setting .
@@ -31,6 +32,9 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   /**
    * Return value if set otherwise take the default value.
    *
+   * @param mixed $value
+   *   The provided value.
+   *
    * @return string
    *   The value for this setting
    */
@@ -41,7 +45,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     else {
       return $value;
     }
-
   }
 
   /**
@@ -62,6 +65,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
 
     /** @var \Drupal\Core\StringTranslation\TranslationInterface $translation */
     $translation = $container->get('string_translation');
+
     $plugin->setStringTranslation($translation);
 
     return $plugin;
@@ -115,7 +119,36 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * {@inheritdoc}
    */
   public function preprocess($value, array $context) {
+    $def = $this->getPatternSettingDefinition();
+    $value = $this->settingsPreprocess($value, $context, $def);
+    if ($def->getTranslate() === TRUE && is_string($value)) {
+      return $this->t($value);
+    }
     return $value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsPreprocess($value, array $context, PatternDefinitionSetting $def) {
+    return $value;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * Creates a generic configuration form for all settings types.
+   * Individual settings plugins can add elements to this form by
+   * overriding PatternSettingTypeBaseInterface::settingsForm().
+   * Most plugins should not override this method unless they
+   * need to alter the generic form elements.
+   *
+   * @see \Drupal\Core\Block\BlockBase::blockForm()
+   */
+  public function buildConfigurationForm(array $form, $value) {
+    $def = $this->getPatternSettingDefinition();
+    $form = $this->settingsForm($form, $value, $def);
+    return $form;
   }
 
 }

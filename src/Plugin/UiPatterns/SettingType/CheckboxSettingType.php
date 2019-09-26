@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
+use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 
 /**
@@ -17,7 +18,7 @@ class CheckboxSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, $value) {
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $def = $this->getPatternSettingDefinition();
     $value = $this->getValue($value);
     if (is_scalar($value)) {

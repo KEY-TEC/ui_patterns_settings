@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
+use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 
 /**
@@ -17,8 +18,7 @@ class SelectSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, $value) {
-    $def = $this->getPatternSettingDefinition();
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $options = ["" => $this->t("Please select")];
     $options += $def->getOptions();
     $form[$def->getName()] = [
