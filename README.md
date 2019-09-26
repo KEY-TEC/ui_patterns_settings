@@ -74,3 +74,4 @@ Each settings type is a plugin. You can easily create your own setting types. **
 - checkbox (multi value)
 - attributes
 - token
+- url (Generates urls from uri or user input. Tokens are accepted. Useful for linkfield uris?)
