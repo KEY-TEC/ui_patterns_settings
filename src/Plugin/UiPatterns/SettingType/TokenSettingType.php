@@ -3,6 +3,7 @@
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
 use Drupal\Core\Entity\ContentEntityType;
+use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 
 /**
@@ -18,7 +19,7 @@ class TokenSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, $value) {
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $def = $this->getPatternSettingDefinition();
     $value = $this->getValue($value);
     $description = $this->getDescription() != NULL ? $this->getDescription() : "";
@@ -57,7 +58,7 @@ class TokenSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function preprocess($value, array $context) {
+  public function settingsPreprocess($value, array $context, PatternDefinitionSetting $def) {
     /** @var \Drupal\Core\Entity\Entity $entity */
     $entity = isset($context['entity']) ? $context['entity'] : NULL;
     $return_value = '';
