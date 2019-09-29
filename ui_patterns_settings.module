@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains ui_patterns_settings.module.
+ */
+
 use Drupal\ui_patterns_settings\UiPatternsSettings;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns\Definition\PatternDefinition;
@@ -18,7 +23,6 @@ function ui_patterns_settings_ui_patterns_layouts_display_settings_form_alter(&$
 function ui_patterns_settings_ui_patterns_display_settings_form_alter(array &$form, $configuration) {
   SettingsFormBuilder::displayForm($form, $configuration);
 }
-
 
 /**
  * Preprocess hook.
@@ -77,4 +81,3 @@ function ui_patterns_settings_field_group_pre_render_alter(&$element, $group, $r
   $pattern_id = isset($group->format_settings['pattern']) ? $group->format_settings['pattern'] : NULL;
   $element['#settings'] = isset($group->format_settings['pattern_settings'][$pattern_id]) ? $group->format_settings['pattern_settings'][$pattern_id] : NULL;
 }
-

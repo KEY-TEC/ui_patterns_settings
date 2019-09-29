@@ -28,3 +28,17 @@ foo_settings:
       type: boolean
       label: Boolean
       preview: 1
+    select:
+      type: select
+      label: Select
+      options:
+        key: value
+    checkbox:
+      type: checkbox
+      label: Checkbox
+      options:
+        box1: Box1
+        box2: Box2
+    attributes:
+      type: attributes
+      label: Attributes

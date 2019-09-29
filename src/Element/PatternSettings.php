@@ -8,9 +8,8 @@ use Drupal\ui_patterns_settings\UiPatternsSettings;
 
 /**
  * Renders a pattern element.
- *
  */
-class PatternSettings  {
+class PatternSettings {
 
   /**
    * Process settings for preview.
@@ -30,6 +29,8 @@ class PatternSettings  {
    *
    * @param array $element
    *   Render array.
+   * @param bool $preview
+   *   True when called in pattern preview mode.
    *
    * @return array
    *   Render array.
@@ -73,7 +74,6 @@ class PatternSettings  {
     return $element;
   }
 
-
   /**
    * Whereas pattern has settings or not.
    *
@@ -90,4 +90,5 @@ class PatternSettings  {
       return FALSE;
     }
   }
+
 }

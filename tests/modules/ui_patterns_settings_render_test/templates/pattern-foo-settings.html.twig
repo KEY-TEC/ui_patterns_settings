@@ -3,7 +3,10 @@
     <div class="textfield">Textfield: {{ textfield }}</div>
     <div class="token">Token: {{ token }}</div>
     <div class="boolean">Boolean: {{ boolean }}</div>
-    <div class="boolean">Url: {{ url }}</div>
+    <div class="url">Url: {{ url }}</div>
+    <div class="select">Select: {{ select }}</div>
+    <div class="checkbox">Checkbox: {% for i in checkbox %}  {{- i -}} {% endfor %}</div>
+    <div class="attributes">Attributes: {{ attributes }}</div>
 </div>
 
 {{ dummy }}

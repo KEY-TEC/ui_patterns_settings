@@ -46,8 +46,6 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
       $this->definition['label'] = $value['label'];
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
-      $this->definition['translate'] = isset($value['translate']) ? $value['translate'] : FALSE;
-      $this->definition['bind'] = isset($value['bind']) ? $value['bind'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
       $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
@@ -223,29 +221,6 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function setType($type) {
     $this->definition['type'] = $type;
-    return $this;
-  }
-
-  /**
-   * Get Translate property.
-   *
-   * @return string
-   *   Property value.
-   */
-  public function getTranslate() {
-    return $this->definition['translate'];
-  }
-
-  /**
-   * Set Translate property.
-   *
-   * @param string $translate
-   *   Property value.
-   *
-   * @return $this
-   */
-  public function setTranslate($translate) {
-    $this->definition['translate'] = $translate;
     return $this;
   }
 

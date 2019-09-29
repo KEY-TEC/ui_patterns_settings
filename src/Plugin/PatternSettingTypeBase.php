@@ -121,9 +121,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   public function preprocess($value, array $context) {
     $def = $this->getPatternSettingDefinition();
     $value = $this->settingsPreprocess($value, $context, $def);
-    if ($def->getTranslate() === TRUE && is_string($value)) {
-      return $this->t($value);
-    }
     return $value;
   }
 

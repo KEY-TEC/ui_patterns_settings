@@ -2,13 +2,13 @@
 
 namespace Drupal\ui_patterns_settings\Plugin;
 
-use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 
 /**
  * Defines an interface for UI Patterns setting type plugins.
  */
-interface PatternSettingTypeInterface extends ConfigurablePluginInterface {
+interface PatternSettingTypeInterface extends ConfigurableInterface {
 
   /**
    * Returns the configuration form elements specific to this settings plugin..
