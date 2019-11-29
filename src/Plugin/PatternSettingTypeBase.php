@@ -3,6 +3,7 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,6 +12,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for UI Patterns Setting plugins.
  */
 abstract class PatternSettingTypeBase extends PluginBase implements ConfigurableInterface, PatternSettingTypeInterface {
+
+  /**
+   * Returns a list of all entity tokens.
+   *
+   * @var \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting
+   */
+  protected function getTokens() {
+
+  }
 
   /**
    * Return pattern definitions for setting .
@@ -132,6 +142,44 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   }
 
   /**
+   * Returns the bind form field.
+   *
+   * @param array $form
+   *   The form definition array for the settings configuration form.
+   * @param string $value
+   *   The stored default value.
+   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
+   *   The pattern definition.
+   *
+   * @return array
+   *   The form.
+   */
+  protected function bindForm(array $form, $value, PatternDefinitionSetting $def) {
+    $form[$def->getName() . "_binding"] = [
+      '#type' => 'textfield',
+      '#title' => "Binding",
+      '#description' => $this->t("Binding for %label", ['%label' => $def->getLabel()]),
+      '#default_value' => $this->getValue($value),
+      '#required' => $def->getRequired(),
+    ];
+    $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
+    /* @var $definition EntityTypeInterface */
+    foreach ($entity_type_definations as $definition) {
+      if ($definition instanceof ContentEntityType) {
+        $content_entity_types[] = $definition->id();
+      }
+    }
+    $form[$def->getName() . '_token'] = [
+      '#theme' => 'token_tree_link',
+      '#token_types' => $content_entity_types,
+      '#show_restricted' => TRUE,
+      '#default_value' => $value,
+      '#weight' => 90,
+    ];
+    return $form;
+  }
+
+  /**
    * {@inheritdoc}
    *
    * Creates a generic configuration form for all settings types.
@@ -142,9 +190,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    *
    * @see \Drupal\Core\Block\BlockBase::blockForm()
    */
-  public function buildConfigurationForm(array $form, $value) {
+  public function buildConfigurationForm(array $form, $value, $binding_value) {
     $def = $this->getPatternSettingDefinition();
     $form = $this->settingsForm($form, $value, $def);
+    $form = $this->bindForm($form, $binding_value, $def);
     return $form;
   }
 

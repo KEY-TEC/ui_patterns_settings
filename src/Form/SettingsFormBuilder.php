@@ -36,9 +36,14 @@ class SettingsFormBuilder {
             '#title' => t('Settings'),
           ];
         }
+<<<<<<< HEAD
         $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : NULL;
+=======
+        $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : "";
+        $binding_value = isset($configuration['pattern']['settings'][$key . "_binding"]) ? $configuration['pattern']['settings'][$key . "_binding"] : "";
+>>>>>>> Add initial token support.
         $settingType = UiPatternsSettings::createSettingType($setting);
-        $form['settings'] += $settingType->buildConfigurationForm([], $setting_value);
+        $form['settings'] += $settingType->buildConfigurationForm([], $setting_value, $binding_value);
       }
       SettingsFormBuilder::buildVariantsForm(".ui-patterns-variant-selector-" . $definition->id(), $form['settings'], $definition);
     }
