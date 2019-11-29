@@ -1,5 +1,7 @@
 # UI Patterns Settings
 
+INTRODUCTION
+------------
 Make UI Patterns configurable through settings.
 
 Sample pattern:
@@ -75,3 +77,20 @@ Each settings type is a plugin. You can easily create your own setting types. **
 - attributes
 - token
 - url (Generates urls from uri or user input. Tokens are accepted. Useful for linkfield uris?)
+
+REQUIREMENTS
+------------
+
+* ui patterns >= 1.1.
+
+INSTALLATION
+------------
+
+* Install the UI Patterns Setting module as you would normally install a contributed
+  Drupal module. Visit https://www.drupal.org/node/1897420. 
+  
+CONFIGURATION
+------------
+
+Navigate to Manage Display of your entity type select an pattern and 
+you will find your configured settings.

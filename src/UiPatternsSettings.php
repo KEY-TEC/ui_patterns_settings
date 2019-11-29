@@ -47,7 +47,6 @@ class UiPatternsSettings {
     $context = [];
     $context['entity'] = $entity;
     $settings_definition = UiPatternsSettings::getPatternDefinitionSettings($definition);
-    $bind = NULL;
     foreach ($settings_definition as $key => $setting_definition) {
       if ($setting_definition->getForcedValue()) {
         $value = $setting_definition->getForcedValue();

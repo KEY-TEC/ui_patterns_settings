@@ -28,8 +28,6 @@ class PatternDefinitionSetting implements \ArrayAccess {
     'forced_value' => NULL,
     'options' => NULL,
     'form_visible' => TRUE,
-    'bind' => FALSE,
-    'translate' => FALSE,
   ];
 
   /**
