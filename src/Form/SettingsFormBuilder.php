@@ -37,8 +37,9 @@ class SettingsFormBuilder {
           ];
         }
         $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : NULL;
+        $binding_value = isset($configuration['pattern']['settings'][$key . "_binding"]) ? $configuration['pattern']['settings'][$key . "_binding"] : "";
         $settingType = UiPatternsSettings::createSettingType($setting);
-        $form['settings'] += $settingType->buildConfigurationForm([], $setting_value);
+        $form['settings'] += $settingType->buildConfigurationForm([], $setting_value, $binding_value);
       }
       SettingsFormBuilder::buildVariantsForm(".ui-patterns-variant-selector-" . $definition->id(), $form['settings'], $definition);
     }

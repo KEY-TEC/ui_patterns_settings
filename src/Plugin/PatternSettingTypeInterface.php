@@ -62,7 +62,9 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
    *   The form definition array for the settings configuration form.
    * @param string $value
    *   The stored default value.
+   * @param string $binding_value
+   *   The stored binding value.
    */
-  public function buildConfigurationForm(array $form, $value);
+  public function buildConfigurationForm(array $form, $value, $binding_value);
 
 }
