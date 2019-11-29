@@ -48,7 +48,7 @@ card:
       type: text
       label: Text
       description: Card text.
-      preview: Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.
+      preview: Cras justo odio, dapibus ac facilisis in.
 ```
 Sample card pattern template:
 ```
@@ -68,7 +68,9 @@ Sample card pattern template:
 Settings in manage display:
 ![pattern settings](images/settings.png)
 
-Each settings type is a plugin. You can easily create your own setting types. **hook_preprocess is not needed any more**
+Each settings type is a plugin. 
+You can easily create your own setting types. **hook_preprocess is not needed any more**
+
 **Currently available setting types are:**
 - textfield
 - select
@@ -76,7 +78,8 @@ Each settings type is a plugin. You can easily create your own setting types. **
 - checkbox (multi value)
 - attributes
 - token
-- url (Generates urls from uri or user input. Tokens are accepted. Useful for linkfield uris?)
+- url (Generates urls from uri or user input. 
+  Tokens are accepted. Useful for linkfield uris?)
 
 REQUIREMENTS
 ------------

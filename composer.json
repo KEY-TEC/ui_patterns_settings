@@ -29,8 +29,8 @@
     "drupal/token": "~1",
     "phpro/grumphp": "~0.14",
     "drupal/ui_patterns": "1.x-dev",
-    "openeuropa/drupal-core-require-dev": "~8.6@rc",
-    "openeuropa/task-runner": "~1.0-beta3"
+    "openeuropa/drupal-core-require-dev": "~8",
+    "openeuropa/task-runner": "~1.0-beta6"
   },
   "repositories": [
     {
