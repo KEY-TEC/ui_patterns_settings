@@ -53,7 +53,8 @@ card:
 Sample card pattern template:
 ```
 
-<a href="{{ url }}" class="card card--{{ modifier }} {{ attributes.class }}" {{ attributes|without('class') }}>
+<a href="{{ url }}" class="card card--{{ modifier }} {{ attributes.class }}" 
+{{ attributes|without('class') }}>
   <div class="thumbnail">
     {{ image }}
     <div class="caption">
@@ -69,7 +70,8 @@ Settings in manage display:
 ![pattern settings](images/settings.png)
 
 Each settings type is a plugin. 
-You can easily create your own setting types. **hook_preprocess is not needed any more**
+You can easily create your own setting types. 
+**hook_preprocess is not needed any more**
 
 **Currently available setting types are:**
 - textfield
@@ -89,7 +91,8 @@ REQUIREMENTS
 INSTALLATION
 ------------
 
-* Install the UI Patterns Setting module as you would normally install a contributed
+* Install the UI Patterns Setting module as you would 
+normally install a contributed
   Drupal module. Visit https://www.drupal.org/node/1897420. 
   
 CONFIGURATION
