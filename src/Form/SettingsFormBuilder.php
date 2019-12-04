@@ -23,6 +23,7 @@ class SettingsFormBuilder {
    */
   public static function layoutForm(array &$form, PatternDefinition $definition, array $configuration) {
     $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    $form['variant']['#attributes']['class'][] = 'ui-patterns-variant-selector';
     if (!empty($settings)) {
       foreach ($settings as $key => $setting) {
         if (empty($setting->getType()) || !$setting->isFormVisible()) {
@@ -39,7 +40,7 @@ class SettingsFormBuilder {
         $settingType = UiPatternsSettings::createSettingType($setting);
         $form['settings'] += $settingType->buildConfigurationForm([], $setting_value);
       }
-      SettingsFormBuilder::buildVariantsForm("select[id='edit-layout-configuration-pattern-variant']", $form['settings'], $definition);
+      SettingsFormBuilder::buildVariantsForm(".ui-patterns-variant-selector", $form['settings'], $definition);
     }
   }
 
@@ -54,6 +55,7 @@ class SettingsFormBuilder {
   public static function displayForm(array &$form, array $configuration) {
     foreach (UiPatterns::getPatternDefinitions() as $pattern_id => $definition) {
       $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+      $form['variants'][$pattern_id]['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $pattern_id;
       if (!empty($settings)) {
         foreach ($settings as $key => $setting) {
           if (empty($setting->getType()) || !$setting->isFormVisible()) {
@@ -75,7 +77,7 @@ class SettingsFormBuilder {
           $setting_value = isset($configuration['pattern_settings'][$pattern_id][$key]) ? $configuration['pattern_settings'][$pattern_id][$key] : "";
           $fieldset += $settingType->buildConfigurationForm([], $setting_value);
         }
-        SettingsFormBuilder::buildVariantsForm("select[id*='edit-form-settings-pattern-variant']", $fieldset, $definition);
+        SettingsFormBuilder::buildVariantsForm('.ui-patterns-variant-selector-' . $pattern_id, $fieldset, $definition);
       }
 
     }
@@ -98,17 +100,12 @@ class SettingsFormBuilder {
       $settings = isset($variant_ary['settings']) ? $variant_ary['settings'] : [];
       foreach ($settings as $name => $setting) {
         if (isset($fieldset[$name])) {
-          $fieldset[$name]['#states']['invisible'][$select_selector] = ['value' => $variant->getName()];
-          $setting_value = is_string($setting) ? $setting : implode(" ", $setting);
-          $fieldset[$name . '_variant_' . $variant->getName()] = [
-            '#type' => 'item',
-            '#title' => "[" . $name . ': ' . $setting_value . "]",
-            '#states' => [
-              'visible' => [
-                $select_selector => ['value' => $variant->getName()],
-              ],
-            ],
-          ];
+          // Add an or before a new state begins.
+          if (isset($fieldset[$name]['#states']['invisible']) && count($fieldset[$name]['#states']['invisible']) != 0) {
+            $fieldset[$name]['#states']['invisible'][] = 'or';
+          }
+          // Hide configured setting.
+          $fieldset[$name]['#states']['invisible'][][$select_selector]['value'] = $variant->getName();
         }
       }
     }
