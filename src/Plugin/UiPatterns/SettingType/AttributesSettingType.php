@@ -22,7 +22,7 @@ class AttributesSettingType extends PatternSettingTypeBase {
    */
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $value = $this->getValue($value);
-    $description = $this->getDescription() != NULL ? $this->getDescription() : $this->t('E.g. role="navigation" class="class-1"');
+    $description = $def->getDescription() != NULL ? $def->getDescription() : $this->t('E.g. role="navigation" class="class-1"');
     $form[$def->getName()] = [
       '#type' => 'textfield',
       '#title' => $def->getLabel(),

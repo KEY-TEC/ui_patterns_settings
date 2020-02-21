@@ -22,7 +22,7 @@ class TokenSettingType extends PatternSettingTypeBase {
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $def = $this->getPatternSettingDefinition();
     $value = $this->getValue($value);
-    $description = $this->getDescription() != NULL ? $this->getDescription() : "";
+    $description = $def->getDescription() != NULL ? $def->getDescription() : "";
 
     $content_entity_types = [];
     $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
