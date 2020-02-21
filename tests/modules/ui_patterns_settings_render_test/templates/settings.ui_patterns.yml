@@ -16,6 +16,10 @@ foo_settings:
       type: textfield
       label: Textfield
       preview: text preview
+    number:
+      type: number
+      label: Number
+      preview: 10
     token:
       type: token
       label: Token

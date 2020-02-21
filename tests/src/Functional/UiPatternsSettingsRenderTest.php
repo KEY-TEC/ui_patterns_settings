@@ -56,6 +56,7 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
     // Define mapping for each setting type.
     $mappings = [
       '[textfield]' => ['input' => 'Text', 'result' => 'Textfield: Text'],
+      '[number]' => ['input' => '10', 'result' => 'Number: 10'],
       '[token][input]' => ['input' => '[node:nid]', 'result' => 'Token: 1'],
       '[url][input]' => ['input' => 'internal:/node/1', 'result' => 'Url: /node/1'],
       '[boolean]' => ['input' => '1', 'result' => 'Boolean: 1'],
