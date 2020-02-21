@@ -23,7 +23,7 @@ class SettingsFormBuilder {
    */
   public static function layoutForm(array &$form, PatternDefinition $definition, array $configuration) {
     $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
-    $form['variant']['#attributes']['class'][] = 'ui-patterns-variant-selector';
+    $form['variant']['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $definition->id();
     if (!empty($settings)) {
       foreach ($settings as $key => $setting) {
         if (empty($setting->getType()) || !$setting->isFormVisible()) {
@@ -40,7 +40,7 @@ class SettingsFormBuilder {
         $settingType = UiPatternsSettings::createSettingType($setting);
         $form['settings'] += $settingType->buildConfigurationForm([], $setting_value);
       }
-      SettingsFormBuilder::buildVariantsForm(".ui-patterns-variant-selector", $form['settings'], $definition);
+      SettingsFormBuilder::buildVariantsForm(".ui-patterns-variant-selector-" . $definition->id(), $form['settings'], $definition);
     }
   }
 
