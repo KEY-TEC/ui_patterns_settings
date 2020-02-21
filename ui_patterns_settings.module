@@ -5,6 +5,7 @@
  * Contains ui_patterns_settings.module.
  */
 
+use Drupal\ui_patterns_settings\Plugin\Layout\PatternSettingsLayout;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns\Definition\PatternDefinition;
@@ -80,4 +81,16 @@ function ui_patterns_settings_theme_registry_alter(&$theme_registry) {
 function ui_patterns_settings_field_group_pre_render_alter(&$element, $group, $rendering_object) {
   $pattern_id = isset($group->format_settings['pattern']) ? $group->format_settings['pattern'] : NULL;
   $element['#settings'] = isset($group->format_settings['pattern_settings'][$pattern_id]) ? $group->format_settings['pattern_settings'][$pattern_id] : NULL;
+}
+
+/**
+ * Implements hook_layout_alter().
+ */
+function ui_patterns_settings_layout_alter(&$definitions) {
+  /** @var \Drupal\Core\Layout\LayoutDefinition $definition */
+  foreach ($definitions as $definition) {
+    if ($definition->getClass() == '\Drupal\ui_patterns_layouts\Plugin\Layout\PatternLayout') {
+      $definition->setClass(PatternSettingsLayout::class);
+    }
+  }
 }
