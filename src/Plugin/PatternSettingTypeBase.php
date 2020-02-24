@@ -39,11 +39,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    *   The value for this setting
    */
   protected function getValue($value) {
-    if (empty($value)) {
+    if ($value === NULL) {
       return $this->getPatternSettingDefinition()->getDefaultValue();
     }
     else {
-      return $value;
+      return $value === NULL ? "" : $value;
     }
   }
 

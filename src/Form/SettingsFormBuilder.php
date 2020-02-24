@@ -36,7 +36,7 @@ class SettingsFormBuilder {
             '#title' => t('Settings'),
           ];
         }
-        $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : "";
+        $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : NULL;
         $settingType = UiPatternsSettings::createSettingType($setting);
         $form['settings'] += $settingType->buildConfigurationForm([], $setting_value);
       }
