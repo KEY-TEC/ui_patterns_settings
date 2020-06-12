@@ -5,5 +5,5 @@ core: 8.x
 package: User interface
 core_version_requirement: ^8 || ^9
 dependencies:
-  - ui_patterns:ui_patterns (>=8.x-1.2)
+  - ui_patterns:ui_patterns
   - token:token
