@@ -1,6 +1,6 @@
 drupal:
   root: "build"
-  base_url: "http://ui-patterns-settings.docksal"
+  base_url: "http://nginx"
   database:
     host: "db"
     port: "3306"
