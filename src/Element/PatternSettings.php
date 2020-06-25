@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Element;
 
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
@@ -9,7 +10,7 @@ use Drupal\ui_patterns_settings\UiPatternsSettings;
 /**
  * Renders a pattern element.
  */
-class PatternSettings {
+class PatternSettings implements TrustedCallbackInterface {
 
   /**
    * Process settings for preview.
@@ -89,6 +90,13 @@ class PatternSettings {
     else {
       return FALSE;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['processSettings', 'processPreviewSettings'];
   }
 
 }

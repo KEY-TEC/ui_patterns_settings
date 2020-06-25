@@ -8,9 +8,15 @@ use Drupal\Tests\ui_patterns\Traits\TwigDebugTrait;
 /**
  * Test pattern preview rendering.
  *
- * @group ui_patterns_settings
+ * @group ui_patterns_setting
+ * @name ui_patterns_setting
  */
 class UiPatternsSettingsRenderTest extends BrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stable';
 
   /**
    * Disable schema validation when running tests.
