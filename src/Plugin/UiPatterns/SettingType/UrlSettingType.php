@@ -4,6 +4,7 @@ namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
 use Drupal\Core\Url;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
+use Drupal\ui_patterns_settings\Plugin\TokenSettingTypeBase;
 
 /**
  * Url setting type.
@@ -13,7 +14,7 @@ use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
  *   label = @Translation("Url")
  * )
  */
-class UrlSettingType extends TokenSettingType {
+class UrlSettingType extends TokenSettingTypeBase {
 
   /**
    * {@inheritdoc}
