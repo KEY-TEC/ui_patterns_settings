@@ -40,7 +40,7 @@ class AttributesSettingType extends PatternSettingTypeBase {
     $value = parent::preprocess($value, $context);
     $parse_html = '<div ' . $value . '></div>';
     $attributes = [];
-    foreach (HTML::load($parse_html)->getElementsByTagName('div') as $div) {
+    foreach (Html::load($parse_html)->getElementsByTagName('div') as $div) {
       foreach ($div->attributes as $attr) {
         $attributes[$attr->nodeName] = $attr->nodeValue;
       }
