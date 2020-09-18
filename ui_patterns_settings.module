@@ -40,6 +40,18 @@ function ui_patterns_settings_preprocess_field__pattern_ds_field_template(array 
 }
 
 /**
+ * Preprocess variables for the pattern_views_row theme hook.
+ *
+ * @param array $variables
+ *   Theme variables.
+ */
+function ui_patterns_settings_preprocess_pattern_views_row(array &$variables) {
+  $pattern_id = $variables['options']['pattern'];
+  $settings = isset($variables['options']['pattern_settings'][$pattern_id]) ? $variables['options']['pattern_settings'][$pattern_id] : NULL;
+  $variables['pattern']['#settings'] = $settings;
+}
+
+/**
  * Implements hook_element_info_alter().
  */
 function ui_patterns_settings_element_info_alter(array &$info) {
