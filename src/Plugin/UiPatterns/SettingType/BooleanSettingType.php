@@ -21,13 +21,11 @@ class BooleanSettingType extends PatternSettingTypeBase {
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
     $value = $this->getValue($value);
     $form[$def->getName()] = [
-      '#type' => 'select',
+      '#type' => 'checkbox',
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $value,
       '#required' => $def->getRequired(),
-      '#options' =>
-        [0 => $this->t('false'), 1 => $this->t('true')],
     ];
     return $form;
   }
