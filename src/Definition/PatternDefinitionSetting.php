@@ -28,7 +28,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
     'forced_value' => NULL,
     'options' => NULL,
     'form_visible' => TRUE,
-    'allow_binding' => FALSE,
+    'allow_token' => FALSE,
   ];
 
   /**
@@ -40,7 +40,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['label'] = $value;
       $this->definition['type'] = 'textfield';
       $this->definition['preview'] = NULL;
-      $this->definition['allow_binding'] = FALSE;
+      $this->definition['allow_token'] = FALSE;
     }
     else {
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
@@ -49,7 +49,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
       $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
-      $this->definition['allow_binding'] = isset($value['allow_binding']) ? $value['allow_binding'] : FALSE;
+      $this->definition['allow_token'] = isset($value['allow_token']) ? $value['allow_token'] : FALSE;
       $this->definition = $value + $this->definition;
     }
   }
@@ -100,8 +100,8 @@ class PatternDefinitionSetting implements \ArrayAccess {
    * @return bool
    *   Property value.
    */
-  public function getAllowBinding() {
-    return $this->definition['allow_binding'];
+  public function getToken() {
+    return $this->definition['allow_token'];
   }
 
   /**
@@ -138,13 +138,13 @@ class PatternDefinitionSetting implements \ArrayAccess {
   /**
    * Set allow binding value property.
    *
-   * @param bool $allow_binding
+   * @param bool $allow_token
    *   Property value.
    *
    * @return $this
    */
-  public function setAllowBinding($allow_binding) {
-    $this->definition['allow_binding'] = $allow_binding;
+  public function setAllowToken($allow_token) {
+    $this->definition['allow_token'] = $allow_token;
     return $this;
   }
 
