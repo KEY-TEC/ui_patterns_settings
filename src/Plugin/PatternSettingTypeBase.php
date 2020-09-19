@@ -155,10 +155,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    *   The form.
    */
   protected function bindForm(array $form, $value, PatternDefinitionSetting $def) {
-    $form[$def->getName() . "_binding"] = [
+    $form[$def->getName() . "_token"] = [
       '#type' => 'textfield',
-      '#title' => "Binding",
-      '#description' => $this->t("Binding for %label", ['%label' => $def->getLabel()]),
+      '#title' => "Token",
+      '#description' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
       '#default_value' => $this->getValue($value),
       '#required' => $def->getRequired(),
     ];
@@ -169,7 +169,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
         $content_entity_types[] = $definition->id();
       }
     }
-    $form[$def->getName() . '_token'] = [
+    $form[$def->getName() . '_token_link'] = [
       '#theme' => 'token_tree_link',
       '#token_types' => $content_entity_types,
       '#show_restricted' => TRUE,
@@ -190,10 +190,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    *
    * @see \Drupal\Core\Block\BlockBase::blockForm()
    */
-  public function buildConfigurationForm(array $form, $value, $binding_value) {
+  public function buildConfigurationForm(array $form, $value, $token_value) {
     $def = $this->getPatternSettingDefinition();
     $form = $this->settingsForm($form, $value, $def);
-    $form = $this->bindForm($form, $binding_value, $def);
+    $form = $this->bindForm($form, $token_value, $def);
     return $form;
   }
 

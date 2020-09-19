@@ -95,7 +95,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
   }
 
   /**
-   * Get allow binding property.
+   * Get allow token property.
    *
    * @return bool
    *   Property value.
@@ -136,7 +136,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
   }
 
   /**
-   * Set allow binding value property.
+   * Set allow token value property.
    *
    * @param bool $allow_token
    *   Property value.
