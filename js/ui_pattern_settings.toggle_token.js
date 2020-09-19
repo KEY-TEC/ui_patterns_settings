@@ -21,10 +21,10 @@
    */
   Drupal.behaviors.ups_toggle_token = {
     attach: function () {
-      var disableClass = 'ui-pattern-settings-disable';
+      var disableClass = 'ui-pattern-settings--disable';
 
-      $('.ui-pattern-settings-token-wrapper').once().each(function () {
-        if ($(this).hasClass('ui-pattern-settings-token-has-value')) {
+      $('.ui-pattern-settings__token-wrapper').once().each(function () {
+        if ($(this).hasClass('ui-pattern-settings--token-has-value')) {
           $(this).prev().addClass(disableClass);
         }
         else {
@@ -35,7 +35,7 @@
 
       $('.js-ui-patterns-settings-token').once().each(function () {
         $(this).click(function () {
-          var tokenWrapper = $(this).closest('.ui-pattern-settings-token-wrapper');
+          var tokenWrapper = $(this).closest('.ui-pattern-settings__token-wrapper');
           var tokenInput = tokenWrapper.find('input');
           var inputWrapper = tokenWrapper.prev();
           var initValue = tokenInput.val();

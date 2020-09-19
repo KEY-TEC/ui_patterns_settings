@@ -100,7 +100,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
    * @return bool
    *   Property value.
    */
-  public function getToken() {
+  public function getAllowToken() {
     return $this->definition['allow_token'];
   }
 

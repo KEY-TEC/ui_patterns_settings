@@ -15,6 +15,7 @@ foo_settings:
     textfield:
       type: textfield
       label: Textfield
+      allow_token: true
       preview: text preview
     number:
       type: number
@@ -30,6 +31,7 @@ foo_settings:
       preview: Url
     boolean:
       type: boolean
+      allow_token: true
       label: Boolean
       preview: 1
     select:

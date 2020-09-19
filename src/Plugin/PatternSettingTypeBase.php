@@ -160,7 +160,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       '#title' => "Token",
       '#description' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
       '#default_value' => $this->getValue($value),
-      '#required' => $def->getRequired(),
     ];
     $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
     /* @var $definition EntityTypeInterface */
@@ -174,7 +173,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       '#token_types' => $content_entity_types,
       '#show_restricted' => TRUE,
       '#default_value' => $value,
-      '#weight' => 90,
     ];
     return $form;
   }
@@ -193,7 +191,20 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   public function buildConfigurationForm(array $form, $value, $token_value) {
     $def = $this->getPatternSettingDefinition();
     $form = $this->settingsForm($form, $value, $def);
-    $form = $this->bindForm($form, $token_value, $def);
+    $classes = 'ui-pattern-settings-token-wrapper';
+    if ($def->getAllowToken() && !empty($token_value)) {
+      $classes .= ' ui-pattern-settings--token-has-value';
+    }
+    $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
+
+    if ($def->getAllowToken()) {
+      $form = $this->bindForm($form, $token_value, $def);
+      $form[$def->getName() . '_token_link']['#suffix'] = '</div>';
+    }
+    else {
+      $form[$def->getName()]['#suffix'] = '</div>';
+    }
+
     return $form;
   }
 

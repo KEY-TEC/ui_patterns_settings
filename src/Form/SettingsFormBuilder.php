@@ -23,6 +23,7 @@ class SettingsFormBuilder {
    */
   public static function layoutForm(array &$form, PatternDefinition $definition, array $configuration) {
     $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    $form['#attached']['library'][] = 'ui_patterns_settings/widget';
     $form['variant']['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $definition->id();
     if (!empty($settings)) {
       foreach ($settings as $key => $setting) {
@@ -54,6 +55,7 @@ class SettingsFormBuilder {
    *   Configurations array.
    */
   public static function displayForm(array &$form, array $configuration) {
+    $form['#attached']['library'][] = 'ui_patterns_settings/widget';
     foreach (UiPatterns::getPatternDefinitions() as $pattern_id => $definition) {
       $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
       $form['variants'][$pattern_id]['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $pattern_id;
