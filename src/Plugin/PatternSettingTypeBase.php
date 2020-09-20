@@ -176,7 +176,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * @param $form
    *   The form.
    */
-  public function validateLayout($element, FormStateInterface &$form_state, &$form) {
+  public static function validateLayout($element, FormStateInterface &$form_state, &$form) {
     $parents = $element['#parents'];
     $value = $form_state->getValue($parents);
     $parents[ count($parents) -1 ] = $parents[ count($parents) -1 ] . '_token';
@@ -186,9 +186,9 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       // is provided by the variant.
       $variant = $form_state->getValue(['layout_configuration', 'pattern', 'variant']);
       if (!empty($variant)) {
-        $variant_def = $this->patternDefinition->getVariant($variant);
+        $variant_def = $element['#pattern_definition']->getVariant($variant);
         $variant_ary = $variant_def->toArray();
-        if (!empty($variant_ary['settings'][$this->patternSettingDefinition->getName()])) {
+        if (!empty($variant_ary['settings'][$element['#pattern_setting_definition']->getName()])) {
           return;
         }
       }
@@ -203,7 +203,9 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     if ($def->getRequired()) {
       $input['#title'] .=' *';
       if ($form_type === 'layouts_display') {
-        $input['#element_validate'][] = [$this, 'validateLayout'];
+        $input['#pattern_setting_definition'] = $this->patternSettingDefinition;
+        $input['#pattern_definition'] = $this->patternDefinition;
+        $input['#element_validate'][] = [static::class, 'validateLayout'];
       }
     }
   }
