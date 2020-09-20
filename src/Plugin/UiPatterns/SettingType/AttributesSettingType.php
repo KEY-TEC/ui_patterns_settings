@@ -28,8 +28,8 @@ class AttributesSettingType extends PatternSettingTypeBase {
       '#title' => $def->getLabel(),
       '#description' => $description,
       '#default_value' => $value,
-      '#required' => $def->getRequired(),
     ];
+    $this->handleInput($form[$def->getName()], $def);
     return $form;
   }
 

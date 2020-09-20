@@ -24,8 +24,8 @@ class NumberSettingType extends PatternSettingTypeBase {
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $this->getValue($value),
-      '#required' => $def->getRequired(),
     ];
+    $this->handleInput($form[$def->getName()], $def);
     return $form;
   }
 

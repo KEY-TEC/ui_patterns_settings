@@ -1,0 +1,29 @@
+.ui-patterns-settings__token-wrapper {
+  position: relative;
+}
+.js-ui-patterns-settings__toggler {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  right: 0;
+  top: 0;
+  background-color: black;
+  display: block;
+  cursor: pointer;
+}
+
+.ui-patterns-settings__token-wrapper > .js-form-item:first-child {
+  display: block !important;
+}
+
+.ui-patterns-settings__token-wrapper > .js-form-item:nth-child(2) {
+  display: none !important;
+}
+
+.ui-patterns-settings__token-wrapper.ui-patterns-settings--token-has-value > .js-form-item:first-child {
+  display: none !important;
+}
+
+.ui-patterns-settings__token-wrapper.ui-patterns-settings--token-has-value > .js-form-item:nth-child(2) {
+  display: block !important;
+}

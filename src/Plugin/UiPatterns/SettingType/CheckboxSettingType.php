@@ -48,9 +48,9 @@ class CheckboxSettingType extends PatternSettingTypeBase {
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $value,
-      '#required' => $def->getRequired(),
       '#options' => $def->getOptions(),
     ];
+    $this->handleInput($form[$def->getName()], $def);
     return $form;
   }
 

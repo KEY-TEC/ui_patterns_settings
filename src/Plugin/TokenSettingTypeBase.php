@@ -53,9 +53,8 @@ abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements Co
       '#title' => $def->getLabel(),
       '#description' => $description,
       '#default_value' => $this->getValue($value),
-      '#required' => $def->getRequired(),
     ];
-
+    $this->handleInput($form[$def->getName()]['input'], $def);
     $form[$def->getName()]['token'] = [
       '#theme' => 'token_tree_link',
       '#token_types' => $content_entity_types,

@@ -25,8 +25,8 @@ class BooleanSettingType extends PatternSettingTypeBase {
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $value,
-      '#required' => $def->getRequired(),
     ];
+    $this->handleInput($form[$def->getName()], $def);
     return $form;
   }
 

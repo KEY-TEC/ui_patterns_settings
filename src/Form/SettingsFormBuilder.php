@@ -109,6 +109,7 @@ class SettingsFormBuilder {
           }
           // Hide configured setting.
           $fieldset[$name]['#states']['invisible'][][$select_selector]['value'] = $variant->getName();
+          $fieldset[$name . '_token']['#states']['invisible'][][$select_selector]['value'] = $variant->getName();
         }
       }
     }

@@ -3,7 +3,6 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
-use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -160,9 +159,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       '#title' => "Token",
       '#description' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
       '#default_value' => $this->getValue($value),
+      '#attributes' => ['class' => ['js-ui-patterns-settings__token']],
     ];
+    /*
     $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
-    /* @var $definition EntityTypeInterface */
     foreach ($entity_type_definations as $definition) {
       if ($definition instanceof ContentEntityType) {
         $content_entity_types[] = $definition->id();
@@ -173,8 +173,12 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       '#token_types' => $content_entity_types,
       '#show_restricted' => TRUE,
       '#default_value' => $value,
-    ];
+    ];*/
     return $form;
+  }
+
+  protected function handleInput(&$input, PatternDefinitionSetting $def) {
+    $input['#attributes']['class'][] = 'js-ui-patterns-settings__input';
   }
 
   /**
@@ -191,18 +195,16 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   public function buildConfigurationForm(array $form, $value, $token_value) {
     $def = $this->getPatternSettingDefinition();
     $form = $this->settingsForm($form, $value, $def);
-    $classes = 'ui-pattern-settings-token-wrapper';
-    if ($def->getAllowToken() && !empty($token_value)) {
-      $classes .= ' ui-pattern-settings--token-has-value';
+    $classes = 'ui-patterns-settings__token-wrapper';
+    if ($def->getAllowToken()) {
+      if (!empty($token_value)) {
+        $classes .= ' ui-patterns-settings--token-has-value';
+      }
+      $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
     }
-    $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
-
     if ($def->getAllowToken()) {
       $form = $this->bindForm($form, $token_value, $def);
-      $form[$def->getName() . '_token_link']['#suffix'] = '</div>';
-    }
-    else {
-      $form[$def->getName()]['#suffix'] = '</div>';
+      $form[$def->getName() . '_token']['#suffix'] = '<span class="js-ui-patterns-settings__toggler"></span></div>';
     }
 
     return $form;
