@@ -24,6 +24,7 @@ class SettingsFormBuilder {
   public static function layoutForm(array &$form, PatternDefinition $definition, array $configuration) {
     $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
     $form['#attached']['library'][] = 'ui_patterns_settings/widget';
+
     $form['variant']['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $definition->id();
     if (!empty($settings)) {
       foreach ($settings as $key => $setting) {
@@ -39,8 +40,8 @@ class SettingsFormBuilder {
         }
         $setting_value = isset($configuration['pattern']['settings'][$key]) ? $configuration['pattern']['settings'][$key] : NULL;
         $token_value = isset($configuration['pattern']['settings'][$key . "_token"]) ? $configuration['pattern']['settings'][$key . "_token"] : "";
-        $settingType = UiPatternsSettings::createSettingType($setting);
-        $form['settings'] += $settingType->buildConfigurationForm([], $setting_value, $token_value);
+        $settingType = UiPatternsSettings::createSettingType($definition, $setting);
+        $form['settings'] += $settingType->buildConfigurationForm([], $setting_value, $token_value, 'layouts_display');
       }
       SettingsFormBuilder::buildVariantsForm(".ui-patterns-variant-selector-" . $definition->id(), $form['settings'], $definition);
     }
@@ -77,8 +78,9 @@ class SettingsFormBuilder {
           }
           $fieldset = &$form['pattern_settings'][$pattern_id];
           $settingType = UiPatternsSettings::createSettingType($setting);
-          $setting_value = isset($configuration['pattern_settings'][$pattern_id][$key]) ? $configuration['pattern_settings'][$pattern_id][$key] : "";
-          $fieldset += $settingType->buildConfigurationForm([], $setting_value);
+          $setting_value = isset($configuration['pattern_settings'][$pattern_id][$key]) ? $configuration['pattern_settings'][$pattern_id][$key] : NULL;
+          $token_value = isset($configuration['pattern_settings'][$pattern_id][$key . "_token"]) ? $configuration['pattern_settings'][$pattern_id][$key . "_token"] : NULL;
+          $fieldset += $settingType->buildConfigurationForm([], $setting_value, $token_value, 'display');
         }
         SettingsFormBuilder::buildVariantsForm('.ui-patterns-variant-selector-' . $pattern_id, $fieldset, $definition);
       }

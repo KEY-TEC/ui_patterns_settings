@@ -51,6 +51,14 @@ class UiPatternsSettings {
       if ($setting_definition->getForcedValue()) {
         $value = $setting_definition->getForcedValue();
       }
+      elseif (!empty($settings[$key . '_token'])) {
+        $token_value = $settings[$key . '_token'];
+        $token_data = [];
+        if ($entity !== NULL) {
+          $token_data[$entity->getEntityTypeId()] = $entity;
+        }
+        $value = \Drupal::token()->replace($token_value, $token_data, ['clear' => TRUE]);
+      }
       elseif (isset($settings[$key])) {
         $value = $settings[$key];
       }
@@ -101,17 +109,18 @@ class UiPatternsSettings {
   /**
    * Create setting type plugin.
    *
-   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $settingDefintion
+   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $setting_defintion
    *   The setting defintion.
    *
    * @return \Drupal\ui_patterns_settings\Plugin\PatternSettingTypeInterface
    *   UI Patterns setting manager instance.
    */
-  public static function createSettingType(PatternDefinitionSetting $settingDefintion) {
+  public static function createSettingType(PatternDefinition $pattern_definition, PatternDefinitionSetting $setting_defintion) {
     $configuration = [];
-    $configuration['pattern_setting_definition'] = $settingDefintion;
+    $configuration['pattern_setting_definition'] = $setting_defintion;
+    $configuration['pattern_definition'] = $pattern_definition;
     return \Drupal::service('plugin.manager.ui_patterns_settings')
-      ->createInstance($settingDefintion->getType(), $configuration);
+      ->createInstance($setting_defintion->getType(), $configuration);
   }
 
 }

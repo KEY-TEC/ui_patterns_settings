@@ -18,14 +18,14 @@ class TextfieldSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
     $form[$def->getName()] = [
       '#type' => 'textfield',
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $this->getValue($value),
     ];
-    $this->handleInput($form[$def->getName()], $def);
+    $this->handleInput($form[$def->getName()], $def, $form_type);
     return $form;
   }
 

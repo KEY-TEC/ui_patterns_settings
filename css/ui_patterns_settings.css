@@ -1,29 +1,28 @@
-.ui-patterns-settings__token-wrapper {
+.js-ui-patterns-settings__wrapper {
   position: relative;
 }
 .js-ui-patterns-settings__toggler {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   right: 0;
   top: 0;
-  background-color: black;
   display: block;
   cursor: pointer;
+  background-image: url("toggler.png");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-.ui-patterns-settings__token-wrapper > .js-form-item:first-child {
-  display: block !important;
+
+.js-ui-patterns-settings__wrapper .js-ui-patterns-settings__token-wrapper > * {
+  display: none;
 }
 
-.ui-patterns-settings__token-wrapper > .js-form-item:nth-child(2) {
-  display: none !important;
+.js-ui-patterns-settings__wrapper.js-ui-patterns-settings--token-has-value > .js-ui-patterns-settings__input-wrapper > * {
+  display: none;
 }
 
-.ui-patterns-settings__token-wrapper.ui-patterns-settings--token-has-value > .js-form-item:first-child {
-  display: none !important;
-}
-
-.ui-patterns-settings__token-wrapper.ui-patterns-settings--token-has-value > .js-form-item:nth-child(2) {
-  display: block !important;
+.js-ui-patterns-settings__wrapper.js-ui-patterns-settings--token-has-value > .js-ui-patterns-settings__token-wrapper > * {
+  display: block;
 }

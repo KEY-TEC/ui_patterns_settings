@@ -19,11 +19,13 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
    *   The stored default value.
    * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
    *   The pattern definition.
+   * @param string $form_type
+   *   The form type. Either layout or layouts_display or display.
    *
    * @return array
    *   The configuration form.
    */
-  public function settingsForm(array $form, $value, PatternDefinitionSetting $def);
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type);
 
   /**
    * Preprocess setting variable.
@@ -64,7 +66,9 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
    *   The stored default value.
    * @param string $token_value
    *   The stored token value.
+   * @param string $form_type
+   *   The form type. Either layout or layouts_display or display.
    */
-  public function buildConfigurationForm(array $form, $value, $token_value);
+  public function buildConfigurationForm(array $form, $value, $token_value, $form_type);
 
 }

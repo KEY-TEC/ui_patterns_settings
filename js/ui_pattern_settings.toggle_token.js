@@ -21,20 +21,22 @@
    */
   Drupal.behaviors.ups_toggle_token = {
     attach: function () {
-      $('.ui-patterns-settings__token-wrapper').once().each(function () {
+      $('.js-ui-patterns-settings__wrapper').once().each(function () {
         var wrapper = $(this);
-        var toggler = $('.js-ui-patterns-settings__toggler', wrapper);
+        var toggler = $('<div class="js-ui-patterns-settings__toggler" title="Use token"></div>');
         $(toggler).click(function () {
           var tokenInput = $('.js-ui-patterns-settings__token', wrapper);
-          if ($(wrapper).hasClass('ui-patterns-settings--token-has-value')) {
+          if ($(wrapper).hasClass('js-ui-patterns-settings--token-has-value')) {
             tokenInput.attr('data-init-val', tokenInput.val());
             tokenInput.val('');
-            wrapper.removeClass('ui-patterns-settings--token-has-value');
+            wrapper.removeClass('js-ui-patterns-settings--token-has-value');
           } else {
             tokenInput.val(tokenInput.attr('data-init-val'));
-            wrapper.addClass('ui-patterns-settings--token-has-value');
+            wrapper.addClass('js-ui-patterns-settings--token-has-value');
           }
         });
+        $('.js-ui-patterns-settings__input-wrapper', wrapper).append(toggler)
+        $('.js-ui-patterns-settings__token-wrapper', wrapper).append(toggler.clone(true))
       });
     }
   };

@@ -18,8 +18,14 @@ class SelectSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
-    $options = ["" => $this->t("Please select")];
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
+    if ($def->getRequired() == FALSE) {
+      $options = ["" => $this->t("Please select")];
+    }
+    else {
+      $options = [];
+    }
+
     $options += $def->getOptions();
     $form[$def->getName()] = [
       '#type' => 'select',
@@ -29,7 +35,7 @@ class SelectSettingType extends PatternSettingTypeBase {
       '#required' => $def->getRequired(),
       '#options' => $options,
     ];
-    $this->handleInput($form[$def->getName()], $def);
+    $this->handleInput($form[$def->getName()], $def, $form_type);
     return $form;
   }
 
