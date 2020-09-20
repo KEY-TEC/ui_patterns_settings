@@ -77,7 +77,7 @@ class SettingsFormBuilder {
             ];
           }
           $fieldset = &$form['pattern_settings'][$pattern_id];
-          $settingType = UiPatternsSettings::createSettingType($setting);
+          $settingType = UiPatternsSettings::createSettingType($definition, $setting);
           $setting_value = isset($configuration['pattern_settings'][$pattern_id][$key]) ? $configuration['pattern_settings'][$pattern_id][$key] : NULL;
           $token_value = isset($configuration['pattern_settings'][$pattern_id][$key . "_token"]) ? $configuration['pattern_settings'][$pattern_id][$key . "_token"] : NULL;
           $fieldset += $settingType->buildConfigurationForm([], $setting_value, $token_value, 'display');

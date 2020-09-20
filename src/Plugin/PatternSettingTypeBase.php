@@ -203,7 +203,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     if ($def->getRequired()) {
       $input['#title'] .=' *';
       if ($form_type === 'layouts_display') {
-        $input['#def'] = $def;
         $input['#element_validate'][] = [$this, 'validateLayout'];
       }
     }

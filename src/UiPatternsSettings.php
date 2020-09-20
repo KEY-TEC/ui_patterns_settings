@@ -77,7 +77,7 @@ class UiPatternsSettings {
           }
         }
       }
-      $settingType = UiPatternsSettings::createSettingType($setting_definition);
+      $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
       $processed_settings[$key] = $settingType->preprocess($value, $context);
     }
     return $processed_settings;
