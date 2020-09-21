@@ -51,6 +51,7 @@ class PatternSettings implements TrustedCallbackInterface {
     if (!empty($element['#variant_token'])) {
       $variant_token = $element['#variant_token'];
       $entity = $context->getProperty('entity');
+      $token_data = [];
       if ($entity !== NULL) {
         $token_data[$entity->getEntityTypeId()] = $entity;
       }
