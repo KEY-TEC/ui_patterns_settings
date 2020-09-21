@@ -32,7 +32,10 @@ selenium:
 commands:
   drupal:site-setup:
     - { task: "symlink", from: "../../../../src", to: "${drupal.root}/modules/custom/ui_patterns_settings/src" }
+    - { task: "symlink", from: "../../../../js", to: "${drupal.root}/modules/custom/ui_patterns_settings/js" }
+    - { task: "symlink", from: "../../../../css", to: "${drupal.root}/modules/custom/ui_patterns_settings/css" }
     - { task: "symlink", from: "../../../../tests", to: "${drupal.root}/modules/custom/ui_patterns_settings/tests" }
+    - { task: "symlink", from: "../../../../ui_patterns_settings.libraries.yml", to: "${drupal.root}/modules/custom/ui_patterns_settings/ui_patterns_settings.libraries.yml" }
     - { task: "symlink", from: "../../../../ui_patterns_settings.info.yml", to: "${drupal.root}/modules/custom/ui_patterns_settings/ui_patterns_settings.info.yml" }
     - { task: "symlink", from: "../../../../ui_patterns_settings.module", to: "${drupal.root}/modules/custom/ui_patterns_settings/ui_patterns_settings.module" }
     - { task: "symlink", from: "../../../../ui_patterns_settings.services.yml", to: "${drupal.root}/modules/custom/ui_patterns_settings/ui_patterns_settings.services.yml" }

@@ -28,6 +28,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
     'forced_value' => NULL,
     'options' => NULL,
     'form_visible' => TRUE,
+    'allow_token' => FALSE,
   ];
 
   /**
@@ -39,6 +40,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['label'] = $value;
       $this->definition['type'] = 'textfield';
       $this->definition['preview'] = NULL;
+      $this->definition['allow_token'] = FALSE;
     }
     else {
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
@@ -47,6 +49,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
       $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
+      $this->definition['allow_token'] = isset($value['allow_token']) ? $value['allow_token'] : FALSE;
       $this->definition = $value + $this->definition;
     }
   }
@@ -92,6 +95,16 @@ class PatternDefinitionSetting implements \ArrayAccess {
   }
 
   /**
+   * Get allow token property.
+   *
+   * @return bool
+   *   Property value.
+   */
+  public function getAllowToken() {
+    return $this->definition['allow_token'];
+  }
+
+  /**
    * Get options array.
    *
    * @return mixed
@@ -119,6 +132,19 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function setDefaultValue($defaultValue) {
     $this->definition['default_value'] = $defaultValue;
+    return $this;
+  }
+
+  /**
+   * Set allow token value property.
+   *
+   * @param bool $allow_token
+   *   Property value.
+   *
+   * @return $this
+   */
+  public function setAllowToken($allow_token) {
+    $this->definition['allow_token'] = $allow_token;
     return $this;
   }
 

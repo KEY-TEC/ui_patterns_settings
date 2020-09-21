@@ -1,0 +1,28 @@
+.js-ui-patterns-settings__wrapper {
+  position: relative;
+}
+.js-ui-patterns-settings__toggler {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  right: 0;
+  top: 0;
+  display: block;
+  cursor: pointer;
+  background-image: url("toggler.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+.js-ui-patterns-settings__wrapper .js-ui-patterns-settings__token-wrapper > * {
+  display: none;
+}
+
+.js-ui-patterns-settings__wrapper.js-ui-patterns-settings--token-has-value > .js-ui-patterns-settings__input-wrapper > * {
+  display: none;
+}
+
+.js-ui-patterns-settings__wrapper.js-ui-patterns-settings--token-has-value > .js-ui-patterns-settings__token-wrapper > * {
+  display: block;
+}

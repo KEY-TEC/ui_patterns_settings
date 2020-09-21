@@ -4,6 +4,7 @@ foo_settings:
     dummy:
       type: text
       label: Dummy
+  allow_variant_token: true
   variants:
     default:
       label: Default
@@ -15,11 +16,14 @@ foo_settings:
     textfield:
       type: textfield
       label: Textfield
+      allow_token: true
       preview: text preview
+      required: true
     number:
       type: number
       label: Number
       preview: 10
+      required: true
     token:
       type: token
       label: Token
@@ -30,6 +34,7 @@ foo_settings:
       preview: Url
     boolean:
       type: boolean
+      allow_token: true
       label: Boolean
       preview: 1
     select:
@@ -37,9 +42,9 @@ foo_settings:
       label: Select
       options:
         key: value
-    checkbox:
-      type: checkbox
-      label: Checkbox
+    checkboxes:
+      type: checkboxes
+      label: Checkboxes
       options:
         box1: Box1
         box2: Box2

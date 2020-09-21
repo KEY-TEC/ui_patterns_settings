@@ -9,11 +9,11 @@ use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
  * Checkbox setting type.
  *
  * @UiPatternsSettingType(
- *   id = "checkbox",
+ *   id = "checkboxes",
  *   label = @Translation("Checkboxes")
  * )
  */
-class CheckboxSettingType extends PatternSettingTypeBase {
+class CheckboxesSettingType extends PatternSettingTypeBase {
 
   /**
    * {@inheritdoc}
@@ -34,7 +34,7 @@ class CheckboxSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
     $def = $this->getPatternSettingDefinition();
     $value = $this->getValue($value);
     if (is_scalar($value)) {
@@ -48,9 +48,9 @@ class CheckboxSettingType extends PatternSettingTypeBase {
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $value,
-      '#required' => $def->getRequired(),
       '#options' => $def->getOptions(),
     ];
+    $this->handleInput($form[$def->getName()], $def, $form_type);
     return $form;
   }
 

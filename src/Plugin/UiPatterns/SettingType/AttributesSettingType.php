@@ -20,7 +20,7 @@ class AttributesSettingType extends PatternSettingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
     $value = $this->getValue($value);
     $description = $def->getDescription() != NULL ? $def->getDescription() : $this->t('E.g. role="navigation" class="class-1"');
     $form[$def->getName()] = [
@@ -28,8 +28,8 @@ class AttributesSettingType extends PatternSettingTypeBase {
       '#title' => $def->getLabel(),
       '#description' => $description,
       '#default_value' => $value,
-      '#required' => $def->getRequired(),
     ];
+    $this->handleInput($form[$def->getName()], $def, $form_type);
     return $form;
   }
 

@@ -30,7 +30,7 @@ abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements Co
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, $value, PatternDefinitionSetting $def) {
+  public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
     $def = $this->getPatternSettingDefinition();
     $value = $this->getValue($value);
     $description = $def->getDescription() != NULL ? $def->getDescription() : "";
@@ -53,9 +53,8 @@ abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements Co
       '#title' => $def->getLabel(),
       '#description' => $description,
       '#default_value' => $this->getValue($value),
-      '#required' => $def->getRequired(),
     ];
-
+    $this->handleInput($form[$def->getName()]['input'], $def, $form_type);
     $form[$def->getName()]['token'] = [
       '#theme' => 'token_tree_link',
       '#token_types' => $content_entity_types,

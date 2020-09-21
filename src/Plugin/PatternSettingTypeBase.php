@@ -3,6 +3,7 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,6 +12,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Base class for UI Patterns Setting plugins.
  */
 abstract class PatternSettingTypeBase extends PluginBase implements ConfigurableInterface, PatternSettingTypeInterface {
+
+  /**
+   * Return pattern definitions for setting .
+   *
+   * @var \Drupal\ui_patterns\Definition\PatternDefinition
+   */
+  private $patternDefinition;
 
   /**
    * Return pattern definitions for setting .
@@ -25,7 +33,9 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     $configuration += $this->defaultConfiguration();
     $this->patternSettingDefinition = $configuration['pattern_setting_definition'];
+    $this->patternDefinition = $configuration['pattern_definition'];
     unset($configuration['pattern_setting_definition']);
+    unset($configuration['pattern_definition']);
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
@@ -132,6 +142,92 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   }
 
   /**
+   * Returns the bind form field.
+   *
+   * @param array $form
+   *   The form definition array for the settings configuration form.
+   * @param string $value
+   *   The stored default value.
+   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
+   *   The pattern definition.
+   *
+   * @return array
+   *   The form.
+   */
+  protected function tokenForm(array $form, $value, PatternDefinitionSetting $def) {
+    $form[$def->getName() . "_token"] = [
+      '#type' => 'textfield',
+      '#title' => "Token",
+      '#description' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
+      '#default_value' => $this->getValue($value),
+      '#attributes' => ['class' => ['js-ui-patterns-settings__token']],
+      '#wrapper_attributes' => ['class' => ['js-ui-patterns-settings__token-wrapper']],
+    ];
+    return $form;
+  }
+
+  /**
+   * Check required input fields in layout forms.
+   *
+   * @param array $element
+   *   The element to validate.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param array $form
+   *   The form.
+   */
+  public static function validateLayout(array $element, FormStateInterface &$form_state, array &$form) {
+    $parents = $element['#parents'];
+    $value = $form_state->getValue($parents);
+    $parents[count($parents) - 1] = $parents[count($parents) - 1] . '_token';
+    $token_value = $form_state->getValue($parents);
+    if (empty($value) && empty($token_value)) {
+      // Check if a variant is selected and the value
+      // is provided by the variant.
+      $variant = $form_state->getValue([
+        'layout_configuration',
+        'pattern',
+        'variant',
+      ]);
+      if (!empty($variant)) {
+        $variant_def = $element['#pattern_definition']->getVariant($variant);
+        $variant_ary = $variant_def->toArray();
+        if (!empty($variant_ary['settings'][$element['#pattern_setting_definition']->getName()])) {
+          return;
+        }
+      }
+
+      $form_state->setError($element, t('@name field is required.', ['@name' => $element['#title']]));
+    }
+  }
+
+  /**
+   * Add validation and basics classes to the raw input field.
+   *
+   * @param array $input
+   *   The input field.
+   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
+   *   The pattern definition.
+   * @param string $form_type
+   *   The form type. Either layouts_display or display.
+   */
+  protected function handleInput(array &$input, PatternDefinitionSetting $def, $form_type) {
+    $input['#attributes']['class'][] = 'js-ui-patterns-settings__input';
+    $input['#wrapper_attributes']['class'][] = 'js-ui-patterns-settings__input-wrapper';
+    if ($def->getRequired()) {
+      $input['#title'] .= ' *';
+      if ($form_type === 'layouts_display') {
+        $input['#pattern_setting_definition'] = $this->patternSettingDefinition;
+        $input['#pattern_definition'] = $this->patternDefinition;
+        $input['#element_validate'][] = [
+          PatternSettingTypeBase::class,
+          'validateLayout',
+        ];
+      }
+    }
+  }
+
+  /**
    * {@inheritdoc}
    *
    * Creates a generic configuration form for all settings types.
@@ -142,9 +238,21 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    *
    * @see \Drupal\Core\Block\BlockBase::blockForm()
    */
-  public function buildConfigurationForm(array $form, $value) {
+  public function buildConfigurationForm(array $form, $value, $token_value, $form_type) {
     $def = $this->getPatternSettingDefinition();
-    $form = $this->settingsForm($form, $value, $def);
+    $form = $this->settingsForm($form, $value, $def, $form_type);
+    $classes = 'js-ui-patterns-settings__wrapper';
+    if ($def->getAllowToken()) {
+      if (!empty($token_value)) {
+        $classes .= ' js-ui-patterns-settings--token-has-value';
+      }
+      $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
+    }
+    if ($def->getAllowToken()) {
+      $form = $this->tokenForm($form, $token_value, $def);
+      $form[$def->getName() . '_token']['#suffix'] = '</div>';
+    }
+
     return $form;
   }
 
