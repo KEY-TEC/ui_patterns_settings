@@ -8,6 +8,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\ui_patterns\Definition\PatternDefinition;
 
 /**
  * Provides the UI Patterns Settings plugin manager.
@@ -24,6 +25,25 @@ class UiPatternsSettingsManager extends DefaultPluginManager implements PluginMa
     $this->moduleHandler = $module_handler;
     $this->alterInfo('ui_patterns_settings_info');
     $this->setCacheBackend($cache_backend, 'ui_patterns_settings', ['ui_patterns_settings']);
+  }
+
+  /**
+   * Returns TRUE if a variant token can configured.
+   *
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $pattern_definition
+   *   The pattern definition.
+   *
+   * @return bool
+   *   Returns TRUE if a variant token can configured.
+   */
+  public static function allowVariantToken(PatternDefinition $pattern_definition) {
+    $ary = $pattern_definition->getAdditional();
+    if (isset($ary['allow_variant_token']) && $ary['allow_variant_token'] === TRUE) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
   }
 
   /**

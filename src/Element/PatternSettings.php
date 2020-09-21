@@ -37,6 +37,17 @@ class PatternSettings implements TrustedCallbackInterface {
    *   Render array.
    */
   public static function processSettings(array $element, $preview = FALSE) {
+    $context = $element['#context'];
+
+    // Handle Variant token.
+    if (!empty($element['#variant_token'])) {
+      $variant_token = $element['#variant_token'];
+      $entity = $context->getProperty('entity');
+      if ($entity !== NULL) {
+        $token_data[$entity->getEntityTypeId()] = $entity;
+      }
+      $element['#variant'] = \Drupal::token()->replace($variant_token, $token_data, ['clear' => TRUE]);
+    }
     // Make sure we don't render anything in case fields are empty.
     if (self::hasSettings($element)) {
       $settings = isset($element['#settings']) ? $element['#settings'] : [];
@@ -51,7 +62,6 @@ class PatternSettings implements TrustedCallbackInterface {
         $configuration = $layout->getConfiguration();
         $settings = isset($configuration['pattern']['settings']) ? $configuration['pattern']['settings'] : [];
       }
-      $context = $element['#context'];
       $pattern_id = $element['#id'];
       $entity = $context->getProperty('entity');
       $variant = isset($element['#variant']) ? $element['#variant'] : NULL;

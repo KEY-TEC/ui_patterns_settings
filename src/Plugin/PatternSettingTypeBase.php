@@ -169,22 +169,26 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   /**
    * Check required input fields in layout forms.
    *
-   * @param $element
+   * @param array $element
    *   The element to validate.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
-   * @param $form
+   * @param array $form
    *   The form.
    */
-  public static function validateLayout($element, FormStateInterface &$form_state, &$form) {
+  public static function validateLayout(array $element, FormStateInterface &$form_state, array &$form) {
     $parents = $element['#parents'];
     $value = $form_state->getValue($parents);
-    $parents[ count($parents) -1 ] = $parents[ count($parents) -1 ] . '_token';
+    $parents[count($parents) - 1] = $parents[count($parents) - 1] . '_token';
     $token_value = $form_state->getValue($parents);
     if (empty($value) && empty($token_value)) {
       // Check if a variant is selected and the value
       // is provided by the variant.
-      $variant = $form_state->getValue(['layout_configuration', 'pattern', 'variant']);
+      $variant = $form_state->getValue([
+        'layout_configuration',
+        'pattern',
+        'variant',
+      ]);
       if (!empty($variant)) {
         $variant_def = $element['#pattern_definition']->getVariant($variant);
         $variant_ary = $variant_def->toArray();
@@ -197,15 +201,28 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     }
   }
 
-  protected function handleInput(&$input, PatternDefinitionSetting $def, $form_type) {
+  /**
+   * Add validation and basics classes to the raw input field.
+   *
+   * @param array $input
+   *   The input field.
+   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
+   *   The pattern definition.
+   * @param string $form_type
+   *   The form type. Either layouts_display or display.
+   */
+  protected function handleInput(array &$input, PatternDefinitionSetting $def, $form_type) {
     $input['#attributes']['class'][] = 'js-ui-patterns-settings__input';
     $input['#wrapper_attributes']['class'][] = 'js-ui-patterns-settings__input-wrapper';
     if ($def->getRequired()) {
-      $input['#title'] .=' *';
+      $input['#title'] .= ' *';
       if ($form_type === 'layouts_display') {
         $input['#pattern_setting_definition'] = $this->patternSettingDefinition;
         $input['#pattern_definition'] = $this->patternDefinition;
-        $input['#element_validate'][] = [static::class, 'validateLayout'];
+        $input['#element_validate'][] = [
+          PatternSettingTypeBase::class,
+          'validateLayout',
+        ];
       }
     }
   }

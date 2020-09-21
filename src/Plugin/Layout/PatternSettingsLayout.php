@@ -20,7 +20,9 @@ class PatternSettingsLayout extends PatternLayout {
     if (isset($configuration['pattern']['settings'])) {
       $build['#settings'] = $configuration['pattern']['settings'];
     }
-
+    if (isset($configuration['pattern']['variant_token'])) {
+      $build['#variant_token'] = $configuration['pattern']['variant_token'];
+    }
     return $build;
   }
 

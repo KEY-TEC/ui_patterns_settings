@@ -4,6 +4,7 @@ foo_settings:
     dummy:
       type: text
       label: Dummy
+  allow_variant_token: true
   variants:
     default:
       label: Default

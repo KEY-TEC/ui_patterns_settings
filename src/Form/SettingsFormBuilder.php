@@ -5,6 +5,7 @@ namespace Drupal\ui_patterns_settings\Form;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
+use Drupal\ui_patterns_settings\UiPatternsSettingsManager;
 
 /**
  * Build settings in manage display form.
@@ -24,6 +25,14 @@ class SettingsFormBuilder {
   public static function layoutForm(array &$form, PatternDefinition $definition, array $configuration) {
     $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
     $form['#attached']['library'][] = 'ui_patterns_settings/widget';
+    if (UiPatternsSettingsManager::allowVariantToken($definition)) {
+      $variant_token_value = isset($configuration['pattern']['variant_token']) ? $configuration['pattern']['variant_token'] : NULL;
+      $form['variant_token'] = [
+        '#type' => 'textfield',
+        '#title' => 'Variant token',
+        '#default_value' => $variant_token_value,
+      ];
+    }
 
     $form['variant']['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $definition->id();
     if (!empty($settings)) {
@@ -60,6 +69,32 @@ class SettingsFormBuilder {
     foreach (UiPatterns::getPatternDefinitions() as $pattern_id => $definition) {
       $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
       $form['variants'][$pattern_id]['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $pattern_id;
+      if (UiPatternsSettingsManager::allowVariantToken($definition)) {
+        $variant_token_value = isset($configuration['variants_token'][$pattern_id]) ? $configuration['variants_token'][$pattern_id] : NULL;
+        $form['variants']['#weight'] = 20;
+        $form['pattern_mapping']['#weight'] = 30;
+        $form['pattern_settings']['#weight'] = 40;
+        $form['variants_token'] = [
+          '#type' => 'container',
+          '#title' => t('Pattern Variant'),
+          '#weight' => 25,
+          '#states' => [
+            'visible' => [
+              'select[id="patterns-select"]' => ['value' => $pattern_id],
+            ],
+          ],
+        ];
+        $form['variants_token'][$pattern_id] = [
+          '#type' => 'textfield',
+          '#title' => t('Variant token'),
+          '#default_value' => $variant_token_value,
+          '#states' => [
+            'visible' => [
+              'select[id="patterns-select"]' => ['value' => $pattern_id],
+            ],
+          ],
+        ];
+      }
       if (!empty($settings)) {
         foreach ($settings as $key => $setting) {
           if (empty($setting->getType()) || !$setting->isFormVisible()) {
