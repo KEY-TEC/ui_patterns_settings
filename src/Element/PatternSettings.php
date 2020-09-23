@@ -39,10 +39,19 @@ class PatternSettings implements TrustedCallbackInterface {
   public static function processSettings(array $element, $preview = FALSE) {
     $context = $element['#context'];
 
+    // Handling variant token for layout builder.
+    if (empty($element['#variant_token']) && isset($element['#layout'])) {
+      /** @var \Drupal\ui_patterns_layout_builder\Plugin\Layout\PatternLayoutBuilder $layout */
+      $layout = $element['#layout'];
+      $configuration = $layout->getConfiguration();
+      $element['#variant_token'] = isset($configuration['pattern']['variant_token']) ? $configuration['pattern']['variant_token'] : NULL;
+    }
+
     // Handle Variant token.
     if (!empty($element['#variant_token'])) {
       $variant_token = $element['#variant_token'];
       $entity = $context->getProperty('entity');
+      $token_data = [];
       if ($entity !== NULL) {
         $token_data[$entity->getEntityTypeId()] = $entity;
       }
