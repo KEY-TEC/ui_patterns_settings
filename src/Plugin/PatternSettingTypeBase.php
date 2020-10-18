@@ -157,10 +157,9 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   protected function tokenForm(array $form, $value, PatternDefinitionSetting $def) {
     $form[$def->getName() . "_token"] = [
       '#type' => 'textfield',
-      '#title' => "Token",
-      '#description' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
+      '#title' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
       '#default_value' => $this->getValue($value),
-      '#attributes' => ['class' => ['js-ui-patterns-settings__token']],
+      '#attributes' => ['class' => ['js-ui-patterns-settings-show-token-link', 'js-ui-patterns-settings__token']],
       '#wrapper_attributes' => ['class' => ['js-ui-patterns-settings__token-wrapper']],
     ];
     return $form;

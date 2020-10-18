@@ -122,6 +122,7 @@ class SettingsFormBuilder {
           '#type' => 'textfield',
           '#title' => t('Variant token'),
           '#default_value' => $variant_token_value,
+          '#attributes' => ['class' => ['js-ui-patterns-settings-show-token-link']],
           '#states' => [
             'visible' => [
               'select[id="patterns-select"]' => ['value' => $pattern_id],

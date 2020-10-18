@@ -23,7 +23,7 @@
       $('.js-ui-patterns-settings-show-token-link').once().each(function () {
         $(this).after($('<a href="#" class="ui-patterns-settings-show-token-a">' + Drupal.t('Browse available token') + '</a>').click(function (event) {
           event.preventDefault();
-          $('#ui-patterns-settings-token-link a').click();
+          $('#ui-patterns-settings-token-link:first a').click();
         }));
       });
 
