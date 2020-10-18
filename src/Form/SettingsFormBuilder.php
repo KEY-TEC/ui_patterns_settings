@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Form;
 
+use Drupal\Core\Entity\ContentEntityType;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
@@ -11,6 +12,35 @@ use Drupal\ui_patterns_settings\UiPatternsSettingsManager;
  * Build settings in manage display form.
  */
 class SettingsFormBuilder {
+
+  /**
+   * Build a hidden tree link token for performance reasons.
+   *
+   * Forms with class .js-ui-patterns-settings-show-token-link will
+   * generate Browse token button which click on the hidden link.
+   * This will reduce the number of browse buttons.
+   *
+   * @param $form
+   *   The form.
+   */
+  private static function buildTokenLink(&$form) {
+    $content_entity_types = [];
+    $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
+    /* @var $definition EntityTypeInterface */
+    foreach ($entity_type_definations as $definition) {
+      if ($definition instanceof ContentEntityType) {
+        $content_entity_types[] = $definition->id();
+      }
+    }
+    $form['token_link'] = [
+      '#prefix' => '<div id="ui-patterns-settings-token-link">',
+      '#suffix' => '</div>',
+      '#theme' => 'token_tree_link',
+      '#token_types' => $content_entity_types,
+      '#show_restricted' => TRUE,
+      '#weight' => 90,
+    ];
+  }
 
   /**
    * Build pattern settings fieldset.
@@ -24,12 +54,15 @@ class SettingsFormBuilder {
    */
   public static function layoutForm(array &$form, PatternDefinition $definition, array $configuration) {
     $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    self::buildTokenLink($form);
+
     $form['#attached']['library'][] = 'ui_patterns_settings/widget';
     if (UiPatternsSettingsManager::allowVariantToken($definition)) {
       $variant_token_value = isset($configuration['pattern']['variant_token']) ? $configuration['pattern']['variant_token'] : NULL;
       $form['variant_token'] = [
         '#type' => 'textfield',
         '#title' => 'Variant token',
+        '#attributes' => ['class' => ['js-ui-patterns-settings-show-token-link']],
         '#default_value' => $variant_token_value,
       ];
     }
@@ -66,6 +99,7 @@ class SettingsFormBuilder {
    */
   public static function displayForm(array &$form, array $configuration) {
     $form['#attached']['library'][] = 'ui_patterns_settings/widget';
+    self::buildTokenLink($form);
     foreach (UiPatterns::getPatternDefinitions() as $pattern_id => $definition) {
       $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
       $form['variants'][$pattern_id]['#attributes']['class'][] = 'ui-patterns-variant-selector-' . $pattern_id;

@@ -1,6 +1,11 @@
 .js-ui-patterns-settings__wrapper {
   position: relative;
 }
+
+#ui-patterns-settings-token-link {
+  display: none;
+}
+
 .js-ui-patterns-settings__toggler {
   position: absolute;
   width: 14px;
@@ -13,7 +18,6 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
-
 
 .js-ui-patterns-settings__wrapper .js-ui-patterns-settings__token-wrapper > * {
   display: none;

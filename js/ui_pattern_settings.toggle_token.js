@@ -17,10 +17,16 @@
    * @prop {Drupal~behaviorAttach} attach
    *   Attach  ui patterns settings toggle functionality to the page.
    *
-   * @todo get most of it out of the behavior in dedicated functions.
    */
   Drupal.behaviors.ups_toggle_token = {
     attach: function () {
+      $('.js-ui-patterns-settings-show-token-link').once().each(function () {
+        $(this).after($('<a href="#">' + Drupal.t('Browse available token') + '</a>').click(function (event) {
+          event.preventDefault();
+          $('#ui-patterns-settings-token-link a').click();
+        }));
+      });
+
       $('.js-ui-patterns-settings__wrapper').once().each(function () {
         var wrapper = $(this);
         var toggler = $('<div class="js-ui-patterns-settings__toggler" title="Use token"></div>');

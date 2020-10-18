@@ -35,15 +35,6 @@ abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements Co
     $value = $this->getValue($value);
     $description = $def->getDescription() != NULL ? $def->getDescription() : "";
 
-    $content_entity_types = [];
-    $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
-    /* @var $definition EntityTypeInterface */
-    foreach ($entity_type_definations as $definition) {
-      if ($definition instanceof ContentEntityType) {
-        $content_entity_types[] = $definition->id();
-      }
-    }
-
     $form[$def->getName()] = [
       '#type' => 'container',
     ];
@@ -53,15 +44,10 @@ abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements Co
       '#title' => $def->getLabel(),
       '#description' => $description,
       '#default_value' => $this->getValue($value),
+      '#attributes' => ['class' => ['js-ui-patterns-settings-show-token-link']],
     ];
     $this->handleInput($form[$def->getName()]['input'], $def, $form_type);
-    $form[$def->getName()]['token'] = [
-      '#theme' => 'token_tree_link',
-      '#token_types' => $content_entity_types,
-      '#show_restricted' => TRUE,
-      '#default_value' => $value,
-      '#weight' => 90,
-    ];
+
     return $form;
   }
 
