@@ -6,6 +6,10 @@
   display: none;
 }
 
+.ui-patterns-settings-show-token-a {
+  display: block;
+}
+
 .js-ui-patterns-settings__toggler {
   position: absolute;
   width: 14px;

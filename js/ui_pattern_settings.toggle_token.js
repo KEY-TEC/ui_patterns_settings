@@ -21,7 +21,7 @@
   Drupal.behaviors.ups_toggle_token = {
     attach: function () {
       $('.js-ui-patterns-settings-show-token-link').once().each(function () {
-        $(this).after($('<a href="#">' + Drupal.t('Browse available token') + '</a>').click(function (event) {
+        $(this).after($('<a href="#" class="ui-patterns-settings-show-token-a">' + Drupal.t('Browse available token') + '</a>').click(function (event) {
           event.preventDefault();
           $('#ui-patterns-settings-token-link a').click();
         }));
