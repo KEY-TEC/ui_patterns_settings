@@ -32,7 +32,6 @@ class SelectSettingType extends PatternSettingTypeBase {
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $this->getValue($value),
-      '#required' => $def->getRequired(),
       '#options' => $options,
     ];
     $this->handleInput($form[$def->getName()], $def, $form_type);
