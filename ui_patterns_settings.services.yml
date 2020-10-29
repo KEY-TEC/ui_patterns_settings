@@ -2,3 +2,7 @@ services:
   plugin.manager.ui_patterns_settings:
     class: Drupal\ui_patterns_settings\UiPatternsSettingsManager
     arguments: ['@container.namespaces', '@module_handler', '@cache.discovery']
+  ui_patterns_settings.twig:
+    class: Drupal\ui_patterns_settings\TwigExtension\UIPatternsSettingsExtension
+    tags:
+      - { name: twig.extension }

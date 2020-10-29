@@ -89,6 +89,7 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
     foreach ($mappings as $key => $mapping) {
       $assert_session->responseContains($mapping['result']);
     }
+    $assert_session->responseContains('Configuration: config_value');
   }
 
 }

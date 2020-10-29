@@ -1,4 +1,5 @@
-
+{% set configuration = pattern_configuration('foo_settings', '', 'config') %}
+{{ dump(configuration) }}
 <div style="border: 1px solid blue">
     <div class="textfield">Textfield: {{ textfield }}</div>
     <div class="number">Number: {{ number }}</div>
@@ -8,6 +9,7 @@
     <div class="select">Select: {{ select }}</div>
     <div class="checkboxes">Checkboxes: {% for i in checkboxes %}  {{- i -}} {% endfor %}</div>
     <div class="attributes">Attributes: {{ attributes }}</div>
+    <div class="config">Configuration: {{ configuration }}</div>
 </div>
 VVV
 {{ variant }}

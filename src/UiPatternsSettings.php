@@ -85,6 +85,32 @@ class UiPatternsSettings {
   }
 
   /**
+   * Get pattern configuration for a pattern definition.
+   *
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
+   *   The definition.
+   *
+   * @return \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[]
+   *   Setting pattern configuration.
+   */
+  public static function getPatternConfiguration(PatternDefinition $definition, $variant = NULL, $name = NULL) {
+    $additional = $definition->getAdditional();
+    $configuration = isset($additional['configuration']) ? $additional['configuration'] : [];
+    if (!empty($variant) && $variant !== 'default') {
+        $variant_ob = $definition->getVariant($variant);
+        if ($variant_ob != NULL) {
+          $variant_ary = $variant_ob->toArray();
+          if (isset($variant_ary['configuration'])) {
+            $configuration = array_merge($configuration, $variant_ary['configuration']);
+          }
+        }
+    }
+    if ($name !== NULL && isset($configuration[$name])) {
+      return $configuration[$name];
+    }
+    return $configuration;
+  }
+  /**
    * Get setting definitions for a pattern definition.
    *
    * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
