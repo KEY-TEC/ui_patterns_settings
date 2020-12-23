@@ -58,6 +58,16 @@ class PatternDefinitionSetting implements \ArrayAccess {
   }
 
   /**
+   * Return any definition value.
+   *
+   * @return string
+   *   The value.
+   */
+  public function getValue($key) {
+    return isset($this->definition[$key]) ? $this->definition[$key] : NULL;
+  }
+
+  /**
    * Return array definition.
    *
    * @return array

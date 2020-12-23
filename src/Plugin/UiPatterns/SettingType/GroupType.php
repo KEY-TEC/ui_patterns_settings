@@ -21,7 +21,7 @@ class GroupType extends PatternSettingTypeBase {
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
     $def = $this->getPatternSettingDefinition();
     $form[$def->getName()] = [
-      '#type' => 'fieldset',
+      '#type' => !empty($def->getValue('group_type')) ? $def->getValue('group_type') : 'fieldset',
       '#title' => $def->getLabel(),
     ];
     return $form;

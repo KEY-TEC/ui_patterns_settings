@@ -54,6 +54,7 @@ foo_settings:
     group:
       type: group
       label: Group
+      group_type: container
     group_sub:
       type: textfield
       label: Textfield
