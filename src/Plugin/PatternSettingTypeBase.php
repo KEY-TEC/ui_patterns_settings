@@ -219,8 +219,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   protected function handleInput(array &$input, PatternDefinitionSetting $def, $form_type) {
     $input['#attributes']['class'][] = 'js-ui-patterns-settings__input';
     $input['#wrapper_attributes']['class'][] = 'js-ui-patterns-settings__input-wrapper';
-    $input['#pattern_setting_definition'] = $this->patternSettingDefinition;
-    $input['#pattern_definition'] = $this->patternDefinition;
     if ($def->getRequired()) {
       $input['#title'] .= ' *';
       if ($form_type === 'layouts_display') {
@@ -246,16 +244,21 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   public function buildConfigurationForm(array $form, $value, $token_value, $form_type) {
     $def = $this->getPatternSettingDefinition();
     $form = $this->settingsForm($form, $value, $def, $form_type);
-    $classes = 'js-ui-patterns-settings__wrapper';
-    if ($def->getAllowToken()) {
-      if (!empty($token_value)) {
-        $classes .= ' js-ui-patterns-settings--token-has-value';
-      }
-      $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
-    }
+    $form[$def->getName()]['#pattern_setting_definition'] = $def;
+    $form[$def->getName()]['#pattern_definition'] = $this->patternDefinition;
+
     if ($def->getAllowToken()) {
       $form = $this->tokenForm($form, $token_value, $def);
-      $form[$def->getName() . '_token']['#suffix'] = '</div>';
+      if (isset($form[$def->getName() . '_token'])) {
+        $classes = 'js-ui-patterns-settings__wrapper';
+        if (!empty($token_value)) {
+          $classes .= ' js-ui-patterns-settings--token-has-value';
+        }
+        $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
+        $form[$def->getName() . '_token']['#suffix'] = '</div>';
+        $form[$def->getName() . '_token']['#pattern_setting_definition'] = $def;
+        $form[$def->getName() . '_token']['#pattern_definition'] = $this->patternDefinition;
+      }
     }
     return $form;
   }

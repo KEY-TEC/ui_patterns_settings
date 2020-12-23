@@ -20,7 +20,6 @@
     "drupal/core-dev": "^8.8 || ^9",
     "drupal/core-recommended": "~8.9.0",
     "drupal/ds": "~3",
-    "drupal/field_group": "~3",
     "drupal/ui_patterns": "~1.2",
     "drupal/page_manager": "*",
     "drupal/panels": "~4",
@@ -67,5 +66,8 @@
   },
   "config": {
     "sort-packages": true
+  },
+  "require": {
+    "drupal/field_group": "3.x-dev@dev"
   }
 }

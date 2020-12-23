@@ -69,6 +69,8 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
       '[select]' => ['input' => 'key', 'result' => 'Select: key'],
       '[checkboxes][box1]' => ['input' => TRUE, 'result' => 'Checkboxes: Box1'],
       '[attributes]' => ['input' => 'class="class"', 'result' => 'Attributes:  class="class"'],
+      '[group_sub]' => ['input' => 'group_sub', 'result' => 'Group sub: group_sub'],
+
     ];
 
     // Select the layout.

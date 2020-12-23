@@ -59,5 +59,18 @@ foo_settings:
       type: textfield
       label: Textfield
       group: group
+    tabs:
+      type: group
+      label: Tabs
+      group_type: horizontal_tabs
+    tab:
+      type: group
+      label: Tab
+      group_type: details
+      group: tabs
+    tab_element:
+      type: textfield
+      label: Textfield
+      group: tab
   configuration:
     config: config_value
