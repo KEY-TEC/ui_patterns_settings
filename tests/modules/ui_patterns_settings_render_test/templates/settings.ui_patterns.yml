@@ -51,5 +51,26 @@ foo_settings:
     attributes:
       type: attributes
       label: Attributes
+    group:
+      type: group
+      label: Group
+      group_type: container
+    group_sub:
+      type: textfield
+      label: Textfield
+      group: group
+    tabs:
+      type: group
+      label: Tabs
+      group_type: horizontal_tabs
+    tab:
+      type: group
+      label: Tab
+      group_type: details
+      group: tabs
+    tab_element:
+      type: textfield
+      label: Textfield
+      group: tab
   configuration:
     config: config_value

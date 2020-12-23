@@ -25,6 +25,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
     'type' => NULL,
     'required' => FALSE,
     'default_value' => NULL,
+    'group' => NULL,
     'forced_value' => NULL,
     'options' => NULL,
     'form_visible' => TRUE,
@@ -40,10 +41,12 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['label'] = $value;
       $this->definition['type'] = 'textfield';
       $this->definition['preview'] = NULL;
+      $this->definition['group'] = NULL;
       $this->definition['allow_token'] = FALSE;
     }
     else {
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
+      $this->definition['group'] = isset($value['group']) ? $value['group'] : NULL;
       $this->definition['label'] = $value['label'];
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
@@ -52,6 +55,16 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['allow_token'] = isset($value['allow_token']) ? $value['allow_token'] : FALSE;
       $this->definition = $value + $this->definition;
     }
+  }
+
+  /**
+   * Return any definition value.
+   *
+   * @return string
+   *   The value.
+   */
+  public function getValue($key) {
+    return isset($this->definition[$key]) ? $this->definition[$key] : NULL;
   }
 
   /**
@@ -72,6 +85,16 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function getName() {
     return $this->definition['name'];
+  }
+
+  /**
+   * Get Group property.
+   *
+   * @return mixed
+   *   Property value.
+   */
+  public function getGroup() {
+    return $this->definition['group'];
   }
 
   /**

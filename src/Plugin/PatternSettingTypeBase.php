@@ -159,7 +159,12 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       '#type' => 'textfield',
       '#title' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
       '#default_value' => $this->getValue($value),
-      '#attributes' => ['class' => ['js-ui-patterns-settings-show-token-link', 'js-ui-patterns-settings__token']],
+      '#attributes' => [
+        'class' => [
+          'js-ui-patterns-settings-show-token-link',
+          'js-ui-patterns-settings__token',
+        ],
+      ],
       '#wrapper_attributes' => ['class' => ['js-ui-patterns-settings__token-wrapper']],
     ];
     return $form;
@@ -200,6 +205,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     }
   }
 
+
   /**
    * Add validation and basics classes to the raw input field.
    *
@@ -216,8 +222,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     if ($def->getRequired()) {
       $input['#title'] .= ' *';
       if ($form_type === 'layouts_display') {
-        $input['#pattern_setting_definition'] = $this->patternSettingDefinition;
-        $input['#pattern_definition'] = $this->patternDefinition;
         $input['#element_validate'][] = [
           PatternSettingTypeBase::class,
           'validateLayout',
@@ -240,19 +244,48 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   public function buildConfigurationForm(array $form, $value, $token_value, $form_type) {
     $def = $this->getPatternSettingDefinition();
     $form = $this->settingsForm($form, $value, $def, $form_type);
-    $classes = 'js-ui-patterns-settings__wrapper';
-    if ($def->getAllowToken()) {
-      if (!empty($token_value)) {
-        $classes .= ' js-ui-patterns-settings--token-has-value';
-      }
-      $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
-    }
+    $form[$def->getName()]['#pattern_setting_definition'] = $def;
+    $form[$def->getName()]['#pattern_definition'] = $this->patternDefinition;
+
     if ($def->getAllowToken()) {
       $form = $this->tokenForm($form, $token_value, $def);
-      $form[$def->getName() . '_token']['#suffix'] = '</div>';
+      if (isset($form[$def->getName() . '_token'])) {
+        $classes = 'js-ui-patterns-settings__wrapper';
+        if (!empty($token_value)) {
+          $classes .= ' js-ui-patterns-settings--token-has-value';
+        }
+        $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
+        $form[$def->getName() . '_token']['#suffix'] = '</div>';
+        $form[$def->getName() . '_token']['#pattern_setting_definition'] = $def;
+        $form[$def->getName() . '_token']['#pattern_definition'] = $this->patternDefinition;
+      }
     }
-
     return $form;
   }
 
+  /**
+   * Set the right group before drupal #group attribute is processed.
+   *
+   * @param array $element
+   *   The form field.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The pattern definition.
+   * @param mixed $form
+   *   The form.
+   *
+   * @return array
+   *   The processed element.
+   */
+  public static function formGroupProcess(array &$element, FormStateInterface $form_state = NULL, array &$form = []) {
+    if (isset($element['#pattern_setting_definition'])) {
+      $setting_definition = $element['#pattern_setting_definition'];
+      if ($setting_definition->getGroup() !== NULL) {
+        $parents = $element['#parents'];
+        array_pop($parents);
+        $parents[] = $setting_definition->getGroup();
+        $element['#group'] = join('][', $parents);
+      }
+    }
+    return $element;
+  }
 }
