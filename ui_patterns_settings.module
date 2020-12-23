@@ -55,12 +55,23 @@ function ui_patterns_settings_preprocess_pattern_views_row(array &$variables) {
  * Implements hook_element_info_alter().
  */
 function ui_patterns_settings_element_info_alter(array &$info) {
+
+  foreach ($info as &$elm) {
+    if (isset($elm['#process'])) {
+      array_unshift($elm['#process'], [
+        \Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase::class,
+        "formGroupProcess",
+      ]);
+    }
+  }
+
   if (isset($info['pattern'])) {
     $info['pattern']['#pre_render'][] = [
       "Drupal\ui_patterns_settings\Element\PatternSettings",
       "processSettings",
     ];
   }
+
   if (isset($info['pattern_preview'])) {
     $info['pattern_preview']['#pre_render'][] = [
       "Drupal\ui_patterns_settings\Element\PatternSettings",

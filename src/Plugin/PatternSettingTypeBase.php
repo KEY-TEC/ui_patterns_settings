@@ -159,7 +159,12 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       '#type' => 'textfield',
       '#title' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
       '#default_value' => $this->getValue($value),
-      '#attributes' => ['class' => ['js-ui-patterns-settings-show-token-link', 'js-ui-patterns-settings__token']],
+      '#attributes' => [
+        'class' => [
+          'js-ui-patterns-settings-show-token-link',
+          'js-ui-patterns-settings__token',
+        ],
+      ],
       '#wrapper_attributes' => ['class' => ['js-ui-patterns-settings__token-wrapper']],
     ];
     return $form;
@@ -200,6 +205,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     }
   }
 
+
   /**
    * Add validation and basics classes to the raw input field.
    *
@@ -213,11 +219,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   protected function handleInput(array &$input, PatternDefinitionSetting $def, $form_type) {
     $input['#attributes']['class'][] = 'js-ui-patterns-settings__input';
     $input['#wrapper_attributes']['class'][] = 'js-ui-patterns-settings__input-wrapper';
+    $input['#pattern_setting_definition'] = $this->patternSettingDefinition;
+    $input['#pattern_definition'] = $this->patternDefinition;
     if ($def->getRequired()) {
       $input['#title'] .= ' *';
       if ($form_type === 'layouts_display') {
-        $input['#pattern_setting_definition'] = $this->patternSettingDefinition;
-        $input['#pattern_definition'] = $this->patternDefinition;
         $input['#element_validate'][] = [
           PatternSettingTypeBase::class,
           'validateLayout',
@@ -251,8 +257,32 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       $form = $this->tokenForm($form, $token_value, $def);
       $form[$def->getName() . '_token']['#suffix'] = '</div>';
     }
-
     return $form;
   }
 
+  /**
+   * Set the right group before drupal #group attribute is processed.
+   *
+   * @param array $element
+   *   The form field.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The pattern definition.
+   * @param mixed $form
+   *   The form.
+   *
+   * @return array
+   *   The processed element.
+   */
+  public static function formGroupProcess(array &$element, FormStateInterface $form_state = NULL, array &$form = []) {
+    if (isset($element['#pattern_setting_definition'])) {
+      $setting_definition = $element['#pattern_setting_definition'];
+      if ($setting_definition->getGroup() !== NULL) {
+        $parents = $element['#parents'];
+        array_pop($parents);
+        $parents[] = $setting_definition->getGroup();
+        $element['#group'] = join('][', $parents);
+      }
+    }
+    return $element;
+  }
 }
