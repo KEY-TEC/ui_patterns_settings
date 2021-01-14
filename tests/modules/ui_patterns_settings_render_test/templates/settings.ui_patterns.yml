@@ -68,9 +68,21 @@ foo_settings:
       label: Tab
       group_type: details
       group: tabs
+    tab_2:
+      type: group
+      label: Tab 2
+      group_type: details
+      group: tabs
     tab_element:
       type: textfield
       label: Textfield
       group: tab
+    tab_element2:
+      type: select
+      label: Textfield 2
+      group: tab_2
+      options:
+        option1: Option 1
+
   configuration:
     config: config_value

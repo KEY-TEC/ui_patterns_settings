@@ -68,7 +68,7 @@ class UiPatternsSettings {
       else {
         $value = $setting_definition->getDefaultValue();
       }
-      if ($variant != 'default' && $variant != NULL) {
+      if (!empty($variant) && $definition->hasVariant($variant)) {
         $variant_ob = $definition->getVariant($variant);
         if ($variant_ob != NULL) {
           $variant_ary = $variant_ob->toArray();
