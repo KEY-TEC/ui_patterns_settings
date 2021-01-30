@@ -67,6 +67,7 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
       '[url][input]' => ['input' => 'internal:/node/1', 'result' => 'Url: /node/1'],
       '[boolean]' => ['input' => '1', 'result' => 'Boolean: 1'],
       '[select]' => ['input' => 'key', 'result' => 'Select: key'],
+      '[enumeration]' => ['input' => 'key', 'result' => 'Enumeration: key'],
       '[checkboxes][box1]' => ['input' => TRUE, 'result' => 'Checkboxes: Box1'],
       '[attributes]' => ['input' => 'class="class"', 'result' => 'Attributes:  class="class"'],
       '[group_sub]' => ['input' => 'group_sub', 'result' => 'Group sub: group_sub'],

@@ -3,7 +3,7 @@
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
-use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
+use Drupal\ui_patterns_settings\Plugin\EnumerationSettingTypeBase;
 
 /**
  * Select setting type.
@@ -13,29 +13,13 @@ use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
  *   label = @Translation("Select")
  * )
  */
-class SelectSettingType extends PatternSettingTypeBase {
+class SelectSettingType extends EnumerationSettingTypeBase {
 
   /**
    * {@inheritdoc}
    */
-  public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
-    if ($def->getRequired() == FALSE) {
-      $options = ["" => $this->t("Please select")];
-    }
-    else {
-      $options = [];
-    }
-
-    $options += $def->getOptions();
-    $form[$def->getName()] = [
-      '#type' => 'select',
-      '#title' => $def->getLabel(),
-      '#description' => $def->getDescription(),
-      '#default_value' => $this->getValue($value),
-      '#options' => $options,
-    ];
-    $this->handleInput($form[$def->getName()], $def, $form_type);
-    return $form;
+  protected function getEnumerationType(PatternDefinitionSetting $def) {
+    return 'select';
   }
 
 }
