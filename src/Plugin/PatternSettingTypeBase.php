@@ -3,7 +3,9 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,7 +13,24 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Base class for UI Patterns Setting plugins.
  */
-abstract class PatternSettingTypeBase extends PluginBase implements ConfigurableInterface, PatternSettingTypeInterface {
+abstract class PatternSettingTypeBase extends PluginBase implements ConfigurableInterface, PatternSettingTypeInterface, ContainerFactoryPluginInterface {
+
+  /**
+   * Returns a list of plugin dependencies.
+   *
+   * @return bool
+   *   True if all dependencies exist.
+   */
+  protected function getSettingTypeDependencies() {
+    return [];
+  }
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  private $moduleHandler;
 
   /**
    * Return pattern definitions for setting .
@@ -30,10 +49,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler) {
     $configuration += $this->defaultConfiguration();
     $this->patternSettingDefinition = $configuration['pattern_setting_definition'];
     $this->patternDefinition = $configuration['pattern_definition'];
+    $this->moduleHandler = $module_handler;
     unset($configuration['pattern_setting_definition']);
     unset($configuration['pattern_definition']);
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -71,8 +91,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $plugin = new static($configuration, $plugin_id, $plugin_definition);
-
+    $plugin = new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'));
     /** @var \Drupal\Core\StringTranslation\TranslationInterface $translation */
     $translation = $container->get('string_translation');
 
@@ -242,7 +261,15 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * @see \Drupal\Core\Block\BlockBase::blockForm()
    */
   public function buildConfigurationForm(array $form, $value, $token_value, $form_type) {
+    $dependencies = $this->getSettingTypeDependencies();
     $def = $this->getPatternSettingDefinition();
+    foreach ($dependencies as $dependency) {
+      if (!$this->moduleHandler->moduleExists($dependency)) {
+        $form[$def->getName()] = ['#markup' => "Missing SettingType {$def->getName()} dependency {$dependency}."];
+        return $form;
+      }
+    }
+
     $form = $this->settingsForm($form, $value, $def, $form_type);
     $form[$def->getName()]['#pattern_setting_definition'] = $def;
     $form[$def->getName()]['#pattern_definition'] = $this->patternDefinition;
@@ -288,4 +315,5 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     }
     return $element;
   }
+
 }

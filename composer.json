@@ -19,20 +19,21 @@
     "require-dev": {
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "~1.4",
+        "drupal/colorwidget": "1.0.x-dev",
         "drupal/config_devel": "~1",
         "drupal/core-composer-scaffold": "^8.8 || ^9",
         "drupal/core-dev": "^8.8 || ^9",
         "drupal/core-recommended": "~8.9.0",
         "drupal/ds": "~3",
-        "drupal/ui_patterns": "~1.2",
+        "drupal/field_group": "3.x-dev@dev",
         "drupal/page_manager": "*",
         "drupal/panels": "~4",
         "drupal/paragraphs": "~1",
         "drupal/token": "~1",
+        "drupal/ui_patterns": "~1.2",
         "drush/drush": "~10",
         "openeuropa/task-runner": "~1.0-beta3",
-        "phpro/grumphp": "~0.14",
-        "drupal/field_group": "3.x-dev@dev"
+        "phpro/grumphp": "~0.14"
     },
     "repositories": [
         {

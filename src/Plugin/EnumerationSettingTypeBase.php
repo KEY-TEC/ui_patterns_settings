@@ -10,6 +10,16 @@ use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase {
 
   /**
+   * Returns empty option.
+   *
+   * @return array
+   *   The empty option.
+   */
+  protected function emptyOption() {
+    return ["" => $this->t("Please select")];
+  }
+
+  /**
    * Returns the enumeration type.
    *
    * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
@@ -27,7 +37,7 @@ abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase {
    */
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
     if ($def->getRequired() == FALSE) {
-      $options = ["" => $this->t("Please select")];
+      $options = $this->emptyOption();
     }
     else {
       $options = [];
