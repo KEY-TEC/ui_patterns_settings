@@ -37,6 +37,7 @@ class PatternSettings implements TrustedCallbackInterface {
    *   Render array.
    */
   public static function processSettings(array $element, $preview = FALSE) {
+    $alter_context = [];
     $context = $element['#context'];
 
     // Handling variant token for layout builder.
@@ -75,6 +76,11 @@ class PatternSettings implements TrustedCallbackInterface {
       $entity = $context->getProperty('entity');
       $variant = isset($element['#variant']) ? $element['#variant'] : NULL;
       $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $variant, $preview, $entity);
+      if (isset($element['#layout'])) {
+        $alter_context['#layout'] = $element['#layout'];
+      }
+      $alter_context['#pattern_context'] = $context;
+      \Drupal::moduleHandler()->alter('ui_pattern_settings_settings', $settings, $alter_context);
       unset($element['#settings']);
       foreach ($settings as $name => $setting) {
         $key = '#' . $name;
