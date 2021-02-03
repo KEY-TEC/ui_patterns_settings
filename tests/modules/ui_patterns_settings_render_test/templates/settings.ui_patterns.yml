@@ -28,6 +28,10 @@ foo_settings:
       type: token
       label: Token
       preview: Token
+    media_library:
+      type: media_library
+      label: Media Library
+      view_mode: 'default'
     url:
       type: url
       label: Url

@@ -23,7 +23,7 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
    *
    * @var bool
    *
-   * @todo: Fix this by providing actual schema validation.
+   * @todo Fix this by providing actual schema validation.
    */
   protected $strictConfigSchema = FALSE;
 
@@ -40,6 +40,7 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
     'ui_patterns_layouts',
     'ui_patterns_settings',
     'field_ui',
+    'colorwidget',
     'token',
     'ds',
     'ui_patterns_settings_render_test',
@@ -53,7 +54,11 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
     $assert_session = $this->assertSession();
 
     $this->drupalCreateContentType(['type' => 'article']);
-    $created_node = $this->drupalCreateNode(['title' => t('Hello Settings'), 'type' => 'article']);
+    $created_node = $this->drupalCreateNode([
+      'title' =>
+      t('Hello Settings'),
+      'type' => 'article',
+    ]);
     $this->enableTwigDebugMode();
 
     $user = $this->drupalCreateUser([], NULL, TRUE);
@@ -64,15 +69,26 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
       '[textfield]' => ['input' => 'Text', 'result' => 'Textfield: Text'],
       '[number]' => ['input' => '10', 'result' => 'Number: 10'],
       '[token][input]' => ['input' => '[node:nid]', 'result' => 'Token: 1'],
-      '[url][input]' => ['input' => 'internal:/node/1', 'result' => 'Url: /node/1'],
+      '[url][input]' => [
+        'input' => 'internal:/node/1',
+        'result' => 'Url: /node/1',
+      ],
       '[boolean]' => ['input' => '1', 'result' => 'Boolean: 1'],
       '[select]' => ['input' => 'key', 'result' => 'Select: key'],
       '[enumeration]' => ['input' => 'key', 'result' => 'Enumeration: key'],
-      '[colorwidget]' => ['input' => 'key', 'result' => 'Colorwidget: key'],
+      '[colorwidget][colorwidget]' => [
+        'input' => 'key',
+        'result' => 'Colorwidget: key',
+      ],
       '[checkboxes][box1]' => ['input' => TRUE, 'result' => 'Checkboxes: Box1'],
-      '[attributes]' => ['input' => 'class="class"', 'result' => 'Attributes:  class="class"'],
-      '[group_sub]' => ['input' => 'group_sub', 'result' => 'Group sub: group_sub'],
-
+      '[attributes]' => [
+        'input' => 'class="class"',
+        'result' => 'Attributes:  class="class"',
+      ],
+      '[group_sub]' => [
+        'input' => 'group_sub',
+        'result' => 'Group sub: group_sub',
+      ],
     ];
 
     // Select the layout.

@@ -3,6 +3,7 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -47,13 +48,21 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   private $patternSettingDefinition;
 
   /**
+   * Return pattern definitions for setting .
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
     $configuration += $this->defaultConfiguration();
     $this->patternSettingDefinition = $configuration['pattern_setting_definition'];
     $this->patternDefinition = $configuration['pattern_definition'];
     $this->moduleHandler = $module_handler;
+    $this->entityTypeManager = $entity_type_manager;
     unset($configuration['pattern_setting_definition']);
     unset($configuration['pattern_definition']);
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -91,7 +100,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $plugin = new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'));
+    $plugin = new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('entity_type.manager'));
     /** @var \Drupal\Core\StringTranslation\TranslationInterface $translation */
     $translation = $container->get('string_translation');
 
@@ -224,7 +233,6 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     }
   }
 
-
   /**
    * Add validation and basics classes to the raw input field.
    *
@@ -303,14 +311,14 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * @return array
    *   The processed element.
    */
-  public static function formGroupProcess(array &$element, FormStateInterface $form_state = NULL, array &$form = []) {
+  public static function formGroupProcess(array &$element, FormStateInterface $form_state = NULL, &$form = []) {
     if (isset($element['#pattern_setting_definition'])) {
       $setting_definition = $element['#pattern_setting_definition'];
       if ($setting_definition->getGroup() !== NULL) {
         $parents = $element['#parents'];
         array_pop($parents);
         $parents[] = $setting_definition->getGroup();
-        $element['#group'] = join('][', $parents);
+        $element['#group'] = implode('][', $parents);
       }
     }
     return $element;
