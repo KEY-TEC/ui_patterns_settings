@@ -96,7 +96,7 @@ class UiPatternsSettings {
   public static function getPatternConfiguration(PatternDefinition $definition, $variant = NULL, $name = NULL) {
     $additional = $definition->getAdditional();
     $configuration = isset($additional['configuration']) ? $additional['configuration'] : [];
-    if (!empty($variant) && $variant !== 'default') {
+    if (!empty($variant)) {
         $variant_ob = $definition->getVariant($variant);
         if ($variant_ob != NULL) {
           $variant_ary = $variant_ob->toArray();
