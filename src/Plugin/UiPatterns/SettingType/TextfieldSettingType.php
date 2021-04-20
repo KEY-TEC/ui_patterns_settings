@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 
@@ -30,4 +31,9 @@ class TextfieldSettingType extends PatternSettingTypeBase {
     return $form;
   }
 
+  public function getExposeField(PatternDefinitionSetting $def) {
+    return BaseFieldDefinition::create('string')
+      ->setLabel($def->getLabel())
+      ->setDescription($def->getDescription());
+  }
 }

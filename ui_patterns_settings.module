@@ -5,17 +5,83 @@
  * Contains ui_patterns_settings.module.
  */
 
+use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeExposeable;
 use Drupal\ui_patterns_settings\Plugin\Layout\PatternSettingsLayout;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns_settings\Form\SettingsFormBuilder;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\FieldStorageDefinition;
+use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Implements hook_ui_patterns_layouts_display_settings_form_alter().
  */
 function ui_patterns_settings_ui_patterns_layouts_display_settings_form_alter(&$form, PatternDefinition $definition, $configuration) {
   SettingsFormBuilder::layoutForm($form, $definition, $configuration);
+}
+
+function ui_patterns_settings_entity_field_storage_info(EntityTypeInterface $entity_type) {
+  $exposed_settings = UiPatternsSettings::getManager()
+    ->getExposedSettings(UiPatterns::getPatternDefinitions());
+  $definitions = [];
+  if (isset($exposed_settings[$entity_type->id()])) {
+    foreach ($exposed_settings[$entity_type->id()] as $bundle => $setting_definitions) {
+      foreach ($setting_definitions as $setting_definition) {
+        $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_' . $setting_definition->getPatternId() . '_' . $setting_definition->getName();
+        $definitions[$field_name] = $setting_definition->getExposeStorage($setting_definition);
+        $definitions[$field_name]->setName($field_name);
+        $definitions[$field_name]->setTargetEntityTypeId($entity_type->id());
+      }
+    }
+  }
+
+  $exposed_variants = UiPatternsSettings::getManager()
+    ->getExposedVariants(UiPatterns::getPatternDefinitions());
+  if (isset($exposed_variants[$entity_type->id()])) {
+    /**
+     * @var string $bundle
+     * @var PatternDefinition $pattern_definition
+     */
+    foreach ($exposed_variants[$entity_type->id()] as $bundle => $pattern_definition) {
+      $field_name = 'testx';//PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_v_' . $pattern_definition->id();
+      $definitions[$field_name] = \Drupal\ui_patterns_settings\BundleFieldDefinition::create('string')
+        ->setName($field_name)
+        ->setLabel($pattern_definition->getLabel())
+        ->setTargetEntityTypeId($entity_type->id());
+    }
+  }
+  return $definitions;
+}
+
+function ui_patterns_settings_entity_bundle_field_info(EntityTypeInterface $entity_type, $bundle, array $base_field_definitions) {
+  $exposed_settings = UiPatternsSettings::getManager()
+    ->getExposedSettings(UiPatterns::getPatternDefinitions());
+  $fields = [];
+  if (isset($exposed_settings[$entity_type->id()][$bundle])) {
+    /** @var \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[] $setting_definition */
+    $setting_definitions = $exposed_settings[$entity_type->id()][$bundle];
+    foreach ($setting_definitions as $setting_definition) {
+      $definition = UiPatterns::getPatternDefinition($setting_definition->getPatternId());
+      $setting_type = UiPatternsSettings::createSettingType($definition, $setting_definition);
+      $field = $setting_type->getExposeField($setting_definition);
+      $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_' . $setting_definition->getPatternId() . '_' . $setting_definition->getName();
+      if ($field !== NULL) {
+        $fields[$field_name] = $field;
+      }
+    }
+  }
+  $exposed_variants = UiPatternsSettings::getManager()
+    ->getExposedVariants(UiPatterns::getPatternDefinitions());
+  if (isset($exposed_variants[$entity_type->id()][$bundle])) {
+    /** @var PatternDefinition $pattern_definition */
+    $pattern_definition = $exposed_variants[$entity_type->id()][$bundle];
+    $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_v_' . $pattern_definition->id();
+    $fields[$field_name] = UiPatternsSettings::getManager()
+      ->getExposeVariantField($pattern_definition);
+  }
+  return $fields;
 }
 
 /**

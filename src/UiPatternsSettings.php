@@ -3,9 +3,11 @@
 namespace Drupal\ui_patterns_settings;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
+use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeExposeable;
 
 /**
  * UI Patterns setting factory class.
@@ -77,8 +79,18 @@ class UiPatternsSettings {
           }
         }
       }
+
       $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
-      $processed_settings[$key] = $settingType->preprocess($value, $context);
+      $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_' . $definition->id(). '_' . $setting_definition->getName();
+      if ($settingType instanceof PatternSettingTypeExposeable &&
+        $entity !== NULL && $entity instanceof FieldableEntityInterface &&
+        $entity->hasField($field_name)) {
+        $processed_settings[$key] = $settingType->processExpose($entity->$field_name, $context);
+      }
+      else {
+        $processed_settings[$key] = $settingType->preprocess($value, $context);
+      }
+
     }
     return $processed_settings;
 
@@ -125,7 +137,7 @@ class UiPatternsSettings {
     $settings = [];
     if (!empty($settings_ary)) {
       foreach ($settings_ary as $key => $setting_ary) {
-        $settings[$key] = new PatternDefinitionSetting($key, $setting_ary);
+        $settings[$key] = new PatternDefinitionSetting($key, $setting_ary, $definition->id());
 
       }
     }

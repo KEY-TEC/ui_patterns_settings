@@ -2,12 +2,42 @@
 
 namespace Drupal\ui_patterns_settings\Plugin;
 
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 
 /**
  * Base class for enumerations like radios or select.
  */
-abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase {
+abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase implements PatternSettingTypeExposeable {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExposeField(PatternDefinitionSetting $def) {
+    $options = $def->getOptions();
+    return BaseFieldDefinition::create('list_string')
+      ->setLabel($def->getLabel())
+      ->setCardinality(1)
+      ->setRequired($def->getRequired())
+      ->setDefaultValue($def->getDefaultValue())
+      ->setSetting('allowed_values', $options)
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => -4,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDescription($def->getDescription());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExposeStorage(PatternDefinitionSetting $def) {
+    return \Drupal\Core\Field\BaseFieldDefinition::create('list_string')
+      ->setLabel($def->getLabel())
+      ;
+  }
 
   /**
    * Returns empty option.
@@ -53,6 +83,10 @@ abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase {
     ];
     $this->handleInput($form[$def->getName()], $def, $form_type);
     return $form;
+  }
+
+  public function processExpose(FieldItemListInterface $field, array $context) {
+    return $field->getValue();
   }
 
 }

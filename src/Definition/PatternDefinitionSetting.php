@@ -30,31 +30,48 @@ class PatternDefinitionSetting implements \ArrayAccess {
     'options' => NULL,
     'form_visible' => TRUE,
     'allow_token' => FALSE,
+    'expose' => FALSE,
   ];
 
   /**
    * PatternDefinitionSetting constructor.
    */
-  public function __construct($name, $value) {
+  public function __construct($name, $value, $pattern_id = NULL) {
     if (is_scalar($value)) {
       $this->definition['name'] = is_numeric($name) ? $value : $name;
       $this->definition['label'] = $value;
       $this->definition['type'] = 'textfield';
       $this->definition['preview'] = NULL;
       $this->definition['group'] = NULL;
+      $this->definition['pattern_id'] = $pattern_id;
+
       $this->definition['allow_token'] = FALSE;
+      $this->definition['expose'] = FALSE;
     }
     else {
+      $this->definition['pattern_id'] = $pattern_id;
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
       $this->definition['group'] = isset($value['group']) ? $value['group'] : NULL;
-      $this->definition['label'] = $value['label'];
+      $this->definition['label'] = isset($value['label']) ? $value['label'] : $name;
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
       $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
       $this->definition['allow_token'] = isset($value['allow_token']) ? $value['allow_token'] : FALSE;
+      $this->definition['expose'] = isset($value['expose']) && is_bool($value['expose']) ? $value['expose'] : FALSE;
+
       $this->definition = $value + $this->definition;
     }
+  }
+
+  /**
+   * Return pattern name.
+   *
+   * @return string
+   *   The pattern name.
+   */
+  public function getPatternId() {
+    return isset($this->definition['pattern_id']) ? $this->definition['pattern_id'] : NULL;
   }
 
   /**
@@ -245,6 +262,29 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function setFormVisible($visible) {
     $this->definition['form_visible'] = $visible;
+    return $this;
+  }
+
+  /**
+   * Get Expose property.
+   *
+   * @return boolean
+   *   Property value.
+   */
+  public function getExpose() {
+    return $this->definition['expose'];
+  }
+
+  /**
+   * Set Expose property.
+   *
+   * @param string $expose
+   *   Property value.
+   *
+   * @return $this
+   */
+  public function setExpose($expose) {
+    $this->definition['expose'] = $expose;
     return $this;
   }
 

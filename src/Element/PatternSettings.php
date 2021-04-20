@@ -2,9 +2,11 @@
 
 namespace Drupal\ui_patterns_settings\Element;
 
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\ui_patterns\UiPatterns;
+use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeExposeable;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
 
 /**
@@ -56,8 +58,19 @@ class PatternSettings implements TrustedCallbackInterface {
       if ($entity !== NULL) {
         $token_data[$entity->getEntityTypeId()] = $entity;
       }
-      $element['#variant'] = \Drupal::token()->replace($variant_token, $token_data, ['clear' => TRUE]);
+      $element['#variant'] = \Drupal::token()
+        ->replace($variant_token, $token_data, ['clear' => TRUE]);
     }
+    if (isset($element['#id'])) {
+      $variant_field_name = $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_' . $element['#id'] . '_variant';
+      if (
+        $entity !== NULL && $entity instanceof FieldableEntityInterface &&
+        $entity->hasField($variant_field_name)) {
+        $element['#variant'] = $entity->$variant_field_name->value;
+      }
+    }
+
+
     // Make sure we don't render anything in case fields are empty.
     if (self::hasSettings($element)) {
       $settings = isset($element['#settings']) ? $element['#settings'] : [];
@@ -75,12 +88,14 @@ class PatternSettings implements TrustedCallbackInterface {
       $pattern_id = $element['#id'];
       $entity = $context->getProperty('entity');
       $variant = isset($element['#variant']) ? $element['#variant'] : NULL;
+
       $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $variant, $preview, $entity);
       if (isset($element['#layout'])) {
         $alter_context['#layout'] = $element['#layout'];
       }
       $alter_context['#pattern_context'] = $context;
-      \Drupal::moduleHandler()->alter('ui_pattern_settings_settings', $settings, $alter_context);
+      \Drupal::moduleHandler()
+        ->alter('ui_pattern_settings_settings', $settings, $alter_context);
       unset($element['#settings']);
       foreach ($settings as $name => $setting) {
         $key = '#' . $name;

@@ -99,6 +99,31 @@ foo_settings:
       group: tab_2
       options:
         option1: Option 1
-
   configuration:
     config: config_value
+
+
+foo_expose_settings:
+  label: Foo expose settings
+  fields:
+    dummy:
+      type: text
+      label: Dummy
+  allow_variant_token: true
+  expose_variants:
+    - node:page
+  variants:
+    default:
+      label: Default
+    blue:
+      label: Blue
+      settings:
+        textfield: blue
+  settings:
+    select:
+      type: select
+      label: Select
+      expose:
+        - node:page
+      options:
+        key: value
