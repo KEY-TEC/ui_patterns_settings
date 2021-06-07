@@ -3,9 +3,11 @@
 namespace Drupal\ui_patterns_settings;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\migrate\Plugin\migrate\process\Route;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
+use Drupal\Core\Entity\EntityMalformedException;
 
 /**
  * UI Patterns setting factory class.
@@ -57,7 +59,15 @@ class UiPatternsSettings {
         if ($entity !== NULL) {
           $token_data[$entity->getEntityTypeId()] = $entity;
         }
-        $value = \Drupal::token()->replace($token_value, $token_data, ['clear' => TRUE]);
+        try {
+          $value = \Drupal::token()->replace($token_value, $token_data, ['clear' => TRUE]);
+        }
+        catch (EntityMalformedException $e) {
+          if (!ui_patterns_settings_is_layout_builder_route()) {
+            throw $e;
+          }
+          // Do nothing inside layout builder.
+        }
       }
       elseif (isset($settings[$key])) {
         $value = $settings[$key];

@@ -21,6 +21,7 @@
         "drupal/media_library_form_element": "~2.0.3",
         "cweagans/composer-patches": "~1.4",
         "drupal/colorwidget": "1.0.x-dev",
+        "drupal/ui_patterns_layout_builder": "~1",
         "drupal/config_devel": "~1",
         "drupal/core-composer-scaffold": "^8.8 || ^9",
         "drupal/core-dev": "^8.8 || ^9",

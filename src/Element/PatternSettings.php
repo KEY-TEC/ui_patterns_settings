@@ -6,6 +6,7 @@ use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
+use Drupal\Core\Entity\EntityMalformedException;
 
 /**
  * Renders a pattern element.
@@ -56,7 +57,15 @@ class PatternSettings implements TrustedCallbackInterface {
       if ($entity !== NULL) {
         $token_data[$entity->getEntityTypeId()] = $entity;
       }
-      $element['#variant'] = \Drupal::token()->replace($variant_token, $token_data, ['clear' => TRUE]);
+      try {
+        $element['#variant'] = \Drupal::token()->replace($variant_token, $token_data, ['clear' => TRUE]);
+      }
+      catch (EntityMalformedException $e) {
+        if (!ui_patterns_settings_is_layout_builder_route()) {
+          throw $e;
+        }
+        // Do nothing inside layout builder.
+      }
     }
     // Make sure we don't render anything in case fields are empty.
     if (self::hasSettings($element)) {

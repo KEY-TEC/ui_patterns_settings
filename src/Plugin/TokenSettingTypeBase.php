@@ -5,6 +5,7 @@ namespace Drupal\ui_patterns_settings\Plugin;
 use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Utility\Token;
+use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -68,7 +69,15 @@ abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements Co
       if ($entity !== NULL) {
         $token_data[$entity->getEntityTypeId()] = $entity;
       }
-      $return_value = $this->getTokenService()->replace($value, $token_data, ['clear' => TRUE]);
+      try {
+        $return_value = $this->getTokenService()->replace($value, $token_data, ['clear' => TRUE]);
+      }
+      catch (EntityMalformedException $e) {
+        if (!ui_patterns_settings_is_layout_builder_route()) {
+          throw $e;
+        }
+        // Do nothing inside layout builder.
+      }
     }
 
     return $return_value;

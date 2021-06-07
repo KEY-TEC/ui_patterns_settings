@@ -19,86 +19,11 @@ foo_settings:
       allow_token: true
       preview: text preview
       required: true
-    number:
-      type: number
-      label: Number
-      preview: 10
-      required: true
-    token:
-      type: token
-      label: Token
-      preview: Token
-    media_library:
-      type: media_library
-      label: Media Library
-      view_mode: 'default'
     url:
       type: url
       label: Url
       preview: Url
-    boolean:
-      type: boolean
-      allow_token: true
-      label: Boolean
-      preview: 1
-    colorwidget:
-      type: colorwidget
-      label: Colorwidget
-      options:
-        key: value/#000000
-        white: White/#ffffff
-    enumeration:
-      type: enumeration
-      enumeration_type: select
-      label: Enumeration
-      options:
-        key: value
-    select:
-      type: select
-      label: Select
-      options:
-        key: value
-    checkboxes:
-      type: checkboxes
-      label: Checkboxes
-      options:
-        box1: Box1
-        box2: Box2
-    attributes:
-      type: attributes
-      label: Attributes
-    group:
-      type: group
-      label: Group
-      group_type: container
-    group_sub:
-      type: textfield
-      label: Textfield
-      group: group
-    tabs:
-      type: group
-      label: Tabs
-      group_type: horizontal_tabs
-    tab:
-      type: group
-      label: Tab
-      group_type: details
-      group: tabs
-    tab_2:
-      type: group
-      label: Tab 2
-      group_type: details
-      group: tabs
-    tab_element:
-      type: textfield
-      label: Textfield
-      group: tab
-    tab_element2:
-      type: select
-      label: Textfield 2
-      group: tab_2
-      options:
-        option1: Option 1
+
 
   configuration:
     config: config_value
