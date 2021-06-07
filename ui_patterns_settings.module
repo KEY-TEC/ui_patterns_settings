@@ -5,83 +5,22 @@
  * Contains ui_patterns_settings.module.
  */
 
-use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeExposeable;
+use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 use Drupal\ui_patterns_settings\Plugin\Layout\PatternSettingsLayout;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns_settings\Form\SettingsFormBuilder;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\FieldStorageDefinition;
-use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\layout_builder\Entity\LayoutEntityDisplayInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_ui_patterns_layouts_display_settings_form_alter().
  */
 function ui_patterns_settings_ui_patterns_layouts_display_settings_form_alter(&$form, PatternDefinition $definition, $configuration) {
   SettingsFormBuilder::layoutForm($form, $definition, $configuration);
-}
-
-function ui_patterns_settings_entity_field_storage_info(EntityTypeInterface $entity_type) {
-  $exposed_settings = UiPatternsSettings::getManager()
-    ->getExposedSettings(UiPatterns::getPatternDefinitions());
-  $definitions = [];
-  if (isset($exposed_settings[$entity_type->id()])) {
-    foreach ($exposed_settings[$entity_type->id()] as $bundle => $setting_definitions) {
-      foreach ($setting_definitions as $setting_definition) {
-        $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_' . $setting_definition->getPatternId() . '_' . $setting_definition->getName();
-        $definitions[$field_name] = $setting_definition->getExposeStorage($setting_definition);
-        $definitions[$field_name]->setName($field_name);
-        $definitions[$field_name]->setTargetEntityTypeId($entity_type->id());
-      }
-    }
-  }
-
-  $exposed_variants = UiPatternsSettings::getManager()
-    ->getExposedVariants(UiPatterns::getPatternDefinitions());
-  if (isset($exposed_variants[$entity_type->id()])) {
-    /**
-     * @var string $bundle
-     * @var PatternDefinition $pattern_definition
-     */
-    foreach ($exposed_variants[$entity_type->id()] as $bundle => $pattern_definition) {
-      $field_name = 'testx';//PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_v_' . $pattern_definition->id();
-      $definitions[$field_name] = \Drupal\ui_patterns_settings\BundleFieldDefinition::create('string')
-        ->setName($field_name)
-        ->setLabel($pattern_definition->getLabel())
-        ->setTargetEntityTypeId($entity_type->id());
-    }
-  }
-  return $definitions;
-}
-
-function ui_patterns_settings_entity_bundle_field_info(EntityTypeInterface $entity_type, $bundle, array $base_field_definitions) {
-  $exposed_settings = UiPatternsSettings::getManager()
-    ->getExposedSettings(UiPatterns::getPatternDefinitions());
-  $fields = [];
-  if (isset($exposed_settings[$entity_type->id()][$bundle])) {
-    /** @var \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[] $setting_definition */
-    $setting_definitions = $exposed_settings[$entity_type->id()][$bundle];
-    foreach ($setting_definitions as $setting_definition) {
-      $definition = UiPatterns::getPatternDefinition($setting_definition->getPatternId());
-      $setting_type = UiPatternsSettings::createSettingType($definition, $setting_definition);
-      $field = $setting_type->getExposeField($setting_definition);
-      $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_' . $setting_definition->getPatternId() . '_' . $setting_definition->getName();
-      if ($field !== NULL) {
-        $fields[$field_name] = $field;
-      }
-    }
-  }
-  $exposed_variants = UiPatternsSettings::getManager()
-    ->getExposedVariants(UiPatterns::getPatternDefinitions());
-  if (isset($exposed_variants[$entity_type->id()][$bundle])) {
-    /** @var PatternDefinition $pattern_definition */
-    $pattern_definition = $exposed_variants[$entity_type->id()][$bundle];
-    $field_name = PatternSettingTypeExposeable::EXPOSED_FIELD_PREFIX . '_v_' . $pattern_definition->id();
-    $fields[$field_name] = UiPatternsSettings::getManager()
-      ->getExposeVariantField($pattern_definition);
-  }
-  return $fields;
 }
 
 /**
@@ -125,7 +64,7 @@ function ui_patterns_settings_element_info_alter(array &$info) {
   foreach ($info as &$elm) {
     if (isset($elm['#process'])) {
       array_unshift($elm['#process'], [
-        \Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase::class,
+        PatternSettingTypeBase::class,
         "formGroupProcess",
       ]);
     }
@@ -182,4 +121,146 @@ function ui_patterns_settings_layout_alter(&$definitions) {
       $definition->setClass(PatternSettingsLayout::class);
     }
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ui_patterns_settings_form_entity_view_display_edit_form_alter(array &$form, FormStateInterface $form_state) {
+  /** @var \Drupal\layout_builder\Entity\LayoutBuilderEntityViewDisplay $display */
+  $display = $form_state->getFormObject()
+    ->getEntity();
+
+  $entityFieldManager = \Drupal::service('entity_field.manager');
+  $fields = $entityFieldManager->getFieldDefinitions($display->getTargetEntityTypeId(), $display->getTargetBundle());
+
+  $form['ui_patterns_settings'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Expose UI Pattern Settings and Variants'),
+    '#tree' => TRUE,
+  ];
+
+  $infos = UiPatternsSettings::getManager()
+    ->getExposedInfo(UiPatterns::getManager()->getDefinitions());
+  foreach ($infos as $key => $info) {
+    /** @var \Drupal\ui_patterns\Definition\PatternDefinition $pattern */
+    $pattern = $info['pattern'];
+    $form['ui_patterns_settings'][$key] = [
+      '#type' => 'fieldset',
+      '#title' => $pattern->getLabel(),
+    ];
+    $form['ui_patterns_settings'][$key]['variant'] = [
+      '#type' => 'checkbox',
+      '#default_value' => isset($fields['uipv_' . $key . '_variant']),
+      '#title' => 'Expose Variants',
+    ];
+    foreach ($info['settings'] as $setting_key => $setting) {
+
+      $form['ui_patterns_settings'][$key]['settings'][$setting_key] = [
+        '#type' => 'checkbox',
+        '#default_value' => isset($fields['uips_' . $key . '_' . $setting_key]),
+        '#title' => 'Expose ' . $setting->getLabel(),
+      ];
+    }
+  }
+
+  $form['#entity_builders']['ui_patterns_settings'] = '_ui_patterns_settings_entity_view_display_form_entity_builder';
+}
+
+/**
+ * Entity builder for entity_view_display_edit_form.
+ */
+function _ui_patterns_settings_entity_view_display_form_entity_builder($entity_type_id, LayoutEntityDisplayInterface $display, &$form, FormStateInterface &$form_state) {
+  $pattern_config = $form_state->getValue('ui_patterns_settings', []);
+  $display->setThirdPartySetting('ui_patterns_settings', 'exposed_patterns', $pattern_config);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function ui_patterns_settings_entity_view_display_update(LayoutEntityDisplayInterface $display) {
+  // This function changes config, so bail out immediately during config sync.
+  if (\Drupal::isConfigSyncing()) {
+    return;
+  }
+
+  $entity_type = $display->getTargetEntityTypeId();
+  $bundle = $display->getTargetBundle();
+
+  $exposed_config = $display->getThirdPartySetting('ui_patterns_settings', 'exposed_patterns', []);
+
+  $pattern_definitions = UiPatterns::getPatternDefinitions();
+  $variant_field_names = [];
+  $setting_field_names = [];
+  foreach ($exposed_config as $pattern_id => $config) {
+
+    if (isset($config['variant']) && $config['variant'] === 1) {
+      $variant_field_names['uipv_' . $pattern_id . '_variant'] = $pattern_definitions[$pattern_id]->getLabel();
+      foreach ($config as $setting_key => $setting_active) {
+        if ($setting_active) {
+          $setting_field_names[] = 'uips_' . $pattern_id . '_' . $setting_key;
+        }
+      }
+    }
+  }
+  foreach ($variant_field_names as $field_name => $label) {
+    $field_storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+
+    if (!$field_storage) {
+      $field_storage = FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => $entity_type,
+        'type' => 'list_string',
+      ]);
+      $field_storage->setLocked(TRUE);
+      $field_storage->setCardinality(1);
+      $field_storage->save();
+    }
+
+    $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+
+    if (!$field) {
+      $field = FieldConfig::create([
+        'field_storage' => $field_storage,
+        'bundle' => $bundle,
+      ]);
+      $field->setLabel($label . ' Variant')
+        ->setRequired(TRUE)
+        ->setSetting('allowed_values_function', '_ui_patterns_settings_variant_allowed_values');
+      $field->save();
+    }
+  }
+}
+
+/**
+ *
+ */
+function _ui_patterns_settings_cleanup_fields($display) {
+  $field_is_used = (bool) \Drupal::entityTypeManager()
+    ->getStorage($display->getEntityTypeId())
+    ->getQuery()
+    ->condition('targetEntityType', $display->getTargetEntityTypeId())
+    ->condition('bundle', $display->getTargetBundle())
+    ->condition('mode', $display->getMode(), '<>')
+    ->condition('third_party_settings.layout_library.enable', TRUE)
+    ->count()
+    ->execute();
+
+  if (!$field_is_used && $field = FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    $field->delete();
+    field_purge_batch(10);
+
+    \Drupal::service('entity_display.repository')
+      ->getFormDisplay($entity_type, $bundle, 'default')
+      ->removeComponent($field_name)
+      ->save();
+  }
+}
+
+/**
+ * Returns
+ */
+function _ui_patterns_settings_variant_allowed_values($field) {
+  $x = $field;
+  return ['a' => 'b'];
 }

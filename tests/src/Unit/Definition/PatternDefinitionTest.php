@@ -23,35 +23,6 @@ class PatternDefinitionSettingsTest extends UnitTestCase {
   }
 
   /**
-   * Test field singleton.
-   */
-  public function testExposedConfig() {
-    $config = [
-      'expose' => [
-        'node:basic',
-        'node:article',
-      ],
-    ];
-    $pattern_definition_setting = new PatternDefinitionSetting('test', $config, 'test');
-    $configs = $pattern_definition_setting->getExposeConfigs();
-
-    $this->assertEquals(
-      [
-        'node',
-        'basic',
-        'node',
-        'article',
-      ],
-      [
-        $configs[0]->getEntityType(),
-        $configs[0]->getBundle(),
-        $configs[1]->getEntityType(),
-        $configs[1]->getBundle(),
-      ]);
-
-  }
-
-  /**
    * Provider.
    *
    * @return array
@@ -61,6 +32,7 @@ class PatternDefinitionSettingsTest extends UnitTestCase {
     return [
       ['getRequired', 'required', TRUE],
       ['getAllowToken', 'allow_token', TRUE],
+      ['getExpose', 'expose', TRUE],
       ['getName', 'name', 'Name'],
       ['getDescription', 'description', 'Pattern description.'],
       ['getType', 'type', 'textfield'],

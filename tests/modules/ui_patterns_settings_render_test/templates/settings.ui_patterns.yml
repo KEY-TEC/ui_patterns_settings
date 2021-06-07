@@ -110,8 +110,7 @@ foo_expose_settings:
       type: text
       label: Dummy
   allow_variant_token: true
-  expose_variants:
-    - node:page
+  expose_variants: true
   variants:
     default:
       label: Default
@@ -123,7 +122,6 @@ foo_expose_settings:
     select:
       type: select
       label: Select
-      expose:
-        - node:page
+      expose: true
       options:
         key: value

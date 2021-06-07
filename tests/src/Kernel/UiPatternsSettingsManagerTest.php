@@ -37,27 +37,16 @@ class UiPatternsSettingsManagerTest extends KernelTestBase {
   }
 
   /**
-   * Test UiPatternsSettingsManager::getExposedSettings.
+   * Test UiPatternsSettingsManager::getExposedInfo.
    *
-   * @covers ::getExposedSettings
+   * @covers ::getExposedInfo
    */
-  public function testGetExposedSettings() {
+  public function testGetExposedInfo() {
     $manager = UiPatternsSettings::getManager();
     $defs = UiPatterns::getPatternDefinitions();
-    $exposed_settings = $manager->getExposedSettings($defs);
-    $this->assertTrue(isset($exposed_settings['node']['basic']));
-  }
-
-  /**
-   * Test UiPatternsSettingsManager::getExposedSettings.
-   *
-   * @covers ::getExposedSettings
-   */
-  public function testGetExposedVariants() {
-    $manager = UiPatternsSettings::getManager();
-    $defs = UiPatterns::getPatternDefinitions();
-    $exposed_variants = $manager->getExposedVariants($defs);
-    $this->assertTrue(isset($exposed_variants['node']['basic']));
+    $exposed_settings = $manager->getExposedInfo($defs);
+    $this->assertTrue(isset($exposed_settings['foo_expose_settings']['settings']['select']));
+    $this->assertTrue(isset($exposed_settings['foo_expose_settings']['variant']));
   }
 
 }

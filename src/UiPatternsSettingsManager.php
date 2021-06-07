@@ -6,11 +6,9 @@ use Drupal\Component\Plugin\Factory\DefaultFactory;
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\ui_patterns\Definition\PatternDefinition;
-use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeExposeable;
 
 /**
  * Provides the UI Patterns Settings plugin manager.
@@ -51,6 +49,9 @@ class UiPatternsSettingsManager extends DefaultPluginManager implements PluginMa
     }
   }
 
+  /**
+   *
+   */
   public function getExposeVariantField(PatternDefinition $def) {
     $options = $def->getVariantsAsOptions();
     return BundleFieldDefinition::create('list_string')
@@ -74,27 +75,6 @@ class UiPatternsSettingsManager extends DefaultPluginManager implements PluginMa
   }
 
   /**
-   * @param \Drupal\ui_patterns\Definition\PatternDefinition[] $pattern_definitions
-   */
-  public function getExposedVariants(array $pattern_definitions) {
-    if ($this->exposedVariants !== NULL) {
-      return $this->exposedVariants;
-    }
-    $exposed_variants = [];
-    foreach ($pattern_definitions as $pattern_definition) {
-      $additional = $pattern_definition->getAdditional();
-      if (isset($additional['expose_variants']) && is_array($additional['expose_variants'])) {
-        foreach ($additional['expose_variants'] as $expose_variant) {
-          [$entity_type, $bundle] = explode(':', $expose_variant);
-          $exposed_variants[$entity_type][$bundle] = $pattern_definition;
-        }
-      }
-    }
-    $this->exposedVariants = $exposed_variants;
-    return $exposed_variants;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function createInstance($plugin_id, array $configuration = []) {
@@ -111,9 +91,9 @@ class UiPatternsSettingsManager extends DefaultPluginManager implements PluginMa
   }
 
   /**
-   * @param array $pattern_definitions
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition[] $pattern_definitions
    */
-  public function getExposedSettings(array $pattern_definitions) {
+  public function getExposedInfo(array $pattern_definitions) {
     if ($this->exposedSettings !== NULL) {
       return $this->exposedSettings;
     }
@@ -121,17 +101,21 @@ class UiPatternsSettingsManager extends DefaultPluginManager implements PluginMa
     foreach ($pattern_definitions as $pattern_definition) {
       $settings = UiPatternsSettings::getPatternDefinitionSettings($pattern_definition);
       foreach ($settings as $setting) {
-        if ($setting instanceof PatternSettingTypeExposeable && count($setting->getExposeConfigs()) !== 0) {
-          $configs = $setting->getExposeConfigs();
-          foreach ($configs as $config) {
-            $exposed_settings[$config->getEntityType()][$config->getBundle()][] = $setting;
-          }
+        if ($setting->getExpose()) {
+          $exposed_settings[$pattern_definition->id()]['pattern'] = $pattern_definition;
+          $exposed_settings[$pattern_definition->id()]['settings'][$setting->getName()] = $setting;
         }
+      }
+    }
+    foreach ($pattern_definitions as $pattern_definition) {
+      $additional = $pattern_definition->getAdditional();
+      if (isset($additional['expose_variants']) && $additional['expose_variants'] === TRUE) {
+        $exposed_settings[$pattern_definition->id()]['variant'] = TRUE;
+        $exposed_settings[$pattern_definition->id()]['pattern'] = $pattern_definition;
       }
     }
     $this->exposedSettings = $exposed_settings;
     return $exposed_settings;
   }
-
 
 }
