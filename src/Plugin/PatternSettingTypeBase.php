@@ -5,7 +5,6 @@ namespace Drupal\ui_patterns_settings\Plugin;
 use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\FieldConfigBase;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -17,7 +16,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Base class for UI Patterns Setting plugins.
  */
-abstract class PatternSettingTypeBase extends PluginBase implements ConfigurableInterface, PatternSettingTypeInterface, ContainerFactoryPluginInterface {
+abstract class PatternSettingTypeBase extends PluginBase implements
+    ConfigurableInterface,
+    PatternSettingTypeInterface,
+    ContainerFactoryPluginInterface {
 
   /**
    * Returns a list of plugin dependencies.
@@ -60,7 +62,13 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    array $plugin_definition,
+    ModuleHandlerInterface $module_handler,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
     $configuration += $this->defaultConfiguration();
     $this->patternSettingDefinition = $configuration['pattern_setting_definition'];
     $this->patternDefinition = $configuration['pattern_definition'];
@@ -102,8 +110,19 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $plugin = new static($configuration, $plugin_id, $plugin_definition, $container->get('module_handler'), $container->get('entity_type.manager'));
+  public static function create(
+    ContainerInterface $container,
+    array $configuration,
+    $plugin_id,
+    $plugin_definition
+  ) {
+    $plugin = new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('module_handler'),
+      $container->get('entity_type.manager')
+    );
     /** @var \Drupal\Core\StringTranslation\TranslationInterface $translation */
     $translation = $container->get('string_translation');
 
@@ -112,8 +131,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     return $plugin;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function alterFieldStorage(FieldStorageConfig $storage_config) {
-
   }
 
   /**
@@ -172,7 +193,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   /**
    * {@inheritdoc}
    */
-  public function settingsPreprocess($value, array $context, PatternDefinitionSetting $def) {
+  public function settingsPreprocess(
+    $value,
+    array $context,
+    PatternDefinitionSetting $def
+  ) {
     return $value;
   }
 
@@ -189,7 +214,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * @return array
    *   The form.
    */
-  protected function tokenForm(array $form, $value, PatternDefinitionSetting $def) {
+  protected function tokenForm(
+    array $form,
+    $value,
+    PatternDefinitionSetting $def
+  ) {
     $form[$def->getName() . "_token"] = [
       '#type' => 'textfield',
       '#title' => $this->t("Token for %label", ['%label' => $def->getLabel()]),
@@ -215,7 +244,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * @param array $form
    *   The form.
    */
-  public static function validateLayout(array $element, FormStateInterface &$form_state, array &$form) {
+  public static function validateLayout(
+    array $element,
+    FormStateInterface &$form_state,
+    array &$form
+  ) {
     $parents = $element['#parents'];
     $value = $form_state->getValue($parents);
     $parents[count($parents) - 1] = $parents[count($parents) - 1] . '_token';
@@ -223,20 +256,31 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     if (empty($value) && empty($token_value)) {
       // Check if a variant is selected and the value
       // is provided by the variant.
-      $variant = $form_state->getValue([
-        'layout_configuration',
-        'pattern',
-        'variant',
-      ]);
+      $variant = $form_state->getValue(
+        [
+          'layout_configuration',
+          'pattern',
+          'variant',
+        ]
+      );
       if (!empty($variant)) {
         $variant_def = $element['#pattern_definition']->getVariant($variant);
         $variant_ary = $variant_def->toArray();
-        if (!empty($variant_ary['settings'][$element['#pattern_setting_definition']->getName()])) {
+        if (!empty(
+        $variant_ary['settings'][$element['#pattern_setting_definition']->getName(
+        )]
+        )) {
           return;
         }
       }
 
-      $form_state->setError($element, t('@name field is required.', ['@name' => $element['#title']]));
+      $form_state->setError(
+        $element,
+        t(
+          '@name field is required.',
+          ['@name' => $element['#title']]
+        )
+      );
     }
   }
 
@@ -250,7 +294,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * @param string $form_type
    *   The form type. Either layouts_display or display.
    */
-  protected function handleInput(array &$input, PatternDefinitionSetting $def, $form_type) {
+  protected function handleInput(
+    array &$input,
+    PatternDefinitionSetting $def,
+    $form_type
+  ) {
     $input['#attributes']['class'][] = 'js-ui-patterns-settings__input';
     $input['#wrapper_attributes']['class'][] = 'js-ui-patterns-settings__input-wrapper';
     if ($def->getRequired()) {
@@ -275,12 +323,18 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    *
    * @see \Drupal\Core\Block\BlockBase::blockForm()
    */
-  public function buildConfigurationForm(array $form, $value, $token_value, $form_type) {
+  public function buildConfigurationForm(
+    array $form,
+    $value,
+    $token_value,
+    $form_type
+  ) {
     $dependencies = $this->getSettingTypeDependencies();
     $def = $this->getPatternSettingDefinition();
     foreach ($dependencies as $dependency) {
       if (!$this->moduleHandler->moduleExists($dependency)) {
-        $form[$def->getName()] = ['#markup' => "Missing SettingType {$def->getName()} dependency {$dependency}."];
+        $form[$def->getName(
+        )] = ['#markup' => "Missing SettingType {$def->getName()} dependency {$dependency}."];
         return $form;
       }
     }
@@ -299,7 +353,8 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
         $form[$def->getName()]['#prefix'] = '<div class="' . $classes . '">';
         $form[$def->getName() . '_token']['#suffix'] = '</div>';
         $form[$def->getName() . '_token']['#pattern_setting_definition'] = $def;
-        $form[$def->getName() . '_token']['#pattern_definition'] = $this->patternDefinition;
+        $form[$def->getName(
+        ) . '_token']['#pattern_definition'] = $this->patternDefinition;
       }
     }
     return $form;
@@ -318,7 +373,11 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
    * @return array
    *   The processed element.
    */
-  public static function formGroupProcess(array &$element, FormStateInterface $form_state = NULL, &$form = []) {
+  public static function formGroupProcess(
+    array &$element,
+    FormStateInterface $form_state = NULL,
+    &$form = []
+  ) {
     if (isset($element['#pattern_setting_definition'])) {
       $setting_definition = $element['#pattern_setting_definition'];
       if ($setting_definition->getGroup() !== NULL) {
