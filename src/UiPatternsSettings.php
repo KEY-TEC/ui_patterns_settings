@@ -219,7 +219,7 @@ class UiPatternsSettings {
    */
   public static function getPatternDefinitionSettings(PatternDefinition $definition) {
     if (isset(self::$settings[$definition->id()])) {
-      return self::$settings;
+      return self::$settings[$definition->id()];
     }
     $additional = $definition->getAdditional();
     $settings_ary = isset($additional['settings']) ? $additional['settings'] : [];
