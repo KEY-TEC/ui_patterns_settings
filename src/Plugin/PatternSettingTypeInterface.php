@@ -3,7 +3,7 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
-use Drupal\Core\Field\FieldConfigBase;
+use Drupal\Core\Field\FieldItemList;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 
@@ -63,13 +63,13 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
    * Returns the processed setting variable for an exposed
    * field.
    *
-   * @param FieldConfigBase $field
+   * @param \Drupal\Core\Field\FieldItemList $items
    *   The stored value.
    *
    * @return mixed
    *   The processed value.
    */
-  public function preprocessExposedField(FieldConfigBase $field);
+  public function preprocessExposedField(FieldItemList $items);
 
   /**
    * Returns the settings configuration form.
