@@ -5,9 +5,11 @@ namespace Drupal\ui_patterns_settings\Plugin;
 use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Field\FieldConfigBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -107,6 +109,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
     $plugin->setStringTranslation($translation);
 
     return $plugin;
+  }
+
+  public function alterFieldStorage(FieldStorageConfig $storage_config) {
+
   }
 
   /**
@@ -322,6 +328,20 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
       }
     }
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldStorageExposableTypes() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preprocessExposedField(FieldConfigBase $field) {
+    return $field->value;
   }
 
 }
