@@ -31,6 +31,7 @@ selenium:
 
 commands:
   drupal:site-setup:
+    - { task: "symlink", from: "../../../../config", to: "${drupal.root}/modules/custom/ui_patterns_settings/config" }
     - { task: "symlink", from: "../../../../src", to: "${drupal.root}/modules/custom/ui_patterns_settings/src" }
     - { task: "symlink", from: "../../../../js", to: "${drupal.root}/modules/custom/ui_patterns_settings/js" }
     - { task: "symlink", from: "../../../../css", to: "${drupal.root}/modules/custom/ui_patterns_settings/css" }

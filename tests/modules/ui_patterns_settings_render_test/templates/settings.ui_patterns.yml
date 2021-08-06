@@ -5,7 +5,7 @@ foo_settings:
       type: text
       label: Dummy
   allow_variant_token: true
-  exposable_variants: true
+  allow_variant_expose: true
   variants:
     default:
       label: Default
@@ -37,13 +37,13 @@ foo_settings:
       type: url
       label: Url
       preview: Url
-      exposable: true
+      allow_expose: true
     boolean:
       type: boolean
       allow_token: true
       label: Boolean
       preview: 1
-      exposable: true
+      allow_expose: true
     colorwidget:
       type: colorwidget
       label: Colorwidget
@@ -59,7 +59,7 @@ foo_settings:
     select:
       type: select
       label: Select
-      exposable: true
+      allow_expose: true
       options:
         key: value
         key2: value2

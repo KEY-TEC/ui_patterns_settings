@@ -40,6 +40,16 @@ class PatternSettings implements TrustedCallbackInterface {
   public static function processSettings(array $element, $preview = FALSE) {
     $alter_context = [];
     $context = $element['#context'];
+    /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
+    $entity = $context->getProperty('entity');
+    if ($entity !== NULL) {
+      $mappings = UiPatternsSettings::getConfigManager()->findVariantMappings($entity->getEntityTypeId());
+      foreach ($mappings as $field_name) {
+        if ($entity->hasField($field_name) && !empty($entity->get($field_name)->value)) {
+          $element['#variant']  = $entity->get($field_name)->value;
+        }
+      }
+    }
 
     // Handling variant token for layout builder.
     if (empty($element['#variant_token']) && isset($element['#layout'])) {
@@ -52,7 +62,6 @@ class PatternSettings implements TrustedCallbackInterface {
     // Handle Variant token.
     if (!empty($element['#variant_token'])) {
       $variant_token = $element['#variant_token'];
-      $entity = $context->getProperty('entity');
       $token_data = [];
       if ($entity !== NULL) {
         $token_data[$entity->getEntityTypeId()] = $entity;

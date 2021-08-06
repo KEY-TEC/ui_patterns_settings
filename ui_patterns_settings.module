@@ -60,26 +60,29 @@ function ui_patterns_settings_form_field_storage_config_edit_form_submit(array $
   $settings = $form_state->getValue('settings');
   /** @var \Drupal\field\Entity\FieldStorageConfig $entity */
   $entity = $form_state->getFormObject()->getEntity();
-  foreach (['pattern_setting', 'use_pattern'] as $key) {
-    $entity->setThirdPartySetting('ui_patterns_settings', $key, $settings[$key]);
+
+  if (isset($settings['use_pattern']) && $settings['use_pattern'] === 1) {
+    UiPatternsSettings::getConfigManager()->addMapping($entity->id(), $settings['pattern_setting']);
+  } else {
+    UiPatternsSettings::getConfigManager()->addMapping($entity->id(), NULL);
   }
+
 }
 
 function ui_patterns_settings_entity_field_storage_info_alter(&$fields, EntityTypeInterface $entity_type) {
   /** @var \Drupal\field\Entity\FieldStorageConfig $field */
   foreach ($fields as $field) {
-    if (!empty($field->getThirdPartySetting('ui_patterns_settings', 'pattern_setting')) &&
-      !empty($field->getThirdPartySetting('ui_patterns_settings', 'use_pattern'))) {
-      list($pattern, $pattern_setting) = explode('::', $field->getThirdPartySetting('ui_patterns_settings', 'pattern_setting'));
+    if (($mapping = UiPatternsSettings::getConfigManager()->getMapping($field->id())) !== NULL) {
+      list($pattern_id, $setting_id) = explode('::', $mapping);
       try {
-        $pattern_definition = UiPatterns::getPatternDefinition($pattern);
-        $settings_definition = UiPatternsSettings::getPatternDefinitionSettings($pattern_definition);
+        $pattern_definition = UiPatterns::getPatternDefinition($pattern_id);
+        $settings_definition = UiPatternsSettings::getPatternDefinitionSetting($pattern_definition, $setting_id);
         if ($pattern_definition !== NULL
-          && (isset($settings_definition[$pattern_setting]))
+          && $settings_definition !== NULL
         ) {
-          $type = UiPatternsSettings::createSettingType($pattern_definition, $settings_definition[$pattern_setting]);
+          $type = UiPatternsSettings::createSettingType($pattern_definition, $settings_definition);
           $type->alterFieldStorage($field);
-        } elseif ($pattern_definition !== NULL && $pattern_setting === 'variants') {
+        } elseif ($pattern_definition !== NULL && $setting_id === 'variant') {
           $field->setSetting('allowed_values_function', 'ui_patterns_settings_allowed_values_function');
         }
         else {
@@ -101,12 +104,12 @@ function ui_patterns_settings_entity_field_storage_info_alter(&$fields, EntityTy
  *   The allowed list of the enumeration.
  */
 function ui_patterns_settings_allowed_values_function(FieldStorageConfig $storage_config) {
-  list($pattern, $setting_key) = explode('::', $storage_config->getThirdPartySetting('ui_patterns_settings', 'pattern_setting'));
+  list($pattern, $setting_key) = explode('::', UiPatternsSettings::getConfigManager()->getMapping($storage_config->id()));
   $pattern_definition = UiPatterns::getPatternDefinition($pattern);
-  $settings_definition = UiPatternsSettings::getPatternDefinitionSettings($pattern_definition);
-  if ($pattern_definition !== NULL && isset($settings_definition[$setting_key])) {
-    return $settings_definition[$setting_key]->getOptions();
-  } elseif ($pattern_definition !== NULL && $setting_key === 'variants') {
+  $settings_definition = UiPatternsSettings::getPatternDefinitionSetting($pattern_definition, $setting_key);
+  if ($pattern_definition !== NULL && $settings_definition !== NULL) {
+    return $settings_definition->getOptions();
+  } elseif ($pattern_definition !== NULL && $setting_key === 'variant') {
     return $pattern_definition->getVariantsAsOptions();
   }
   return [];

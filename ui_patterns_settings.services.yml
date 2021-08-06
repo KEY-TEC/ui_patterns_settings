@@ -6,3 +6,6 @@ services:
     class: Drupal\ui_patterns_settings\TwigExtension\UIPatternsSettingsExtension
     tags:
       - { name: twig.extension }
+  ui_patterns_settings.config_manager:
+    class: Drupal\ui_patterns_settings\ConfigManager
+    arguments: ['@config.factory']

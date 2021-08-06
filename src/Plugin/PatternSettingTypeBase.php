@@ -6,6 +6,7 @@ use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldConfigBase;
+use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
@@ -340,8 +341,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements Configurable
   /**
    * {@inheritdoc}
    */
-  public function preprocessExposedField(FieldConfigBase $field) {
-    return $field->value;
+  public function preprocessExposedField(FieldItemList $items) {
+    foreach ($items as $item) {
+      return $item->value;
+    }
   }
 
 }

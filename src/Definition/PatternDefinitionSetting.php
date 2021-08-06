@@ -43,7 +43,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['preview'] = NULL;
       $this->definition['group'] = NULL;
       $this->definition['allow_token'] = FALSE;
-      $this->definition['exposable'] = FALSE;
+      $this->definition['allow_expose'] = FALSE;
 
     }
     else {
@@ -51,11 +51,11 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['group'] = isset($value['group']) ? $value['group'] : NULL;
       $this->definition['label'] = $value['label'];
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
-      $this->definition['exposable'] = isset($value['exposable']) ? $value['exposable'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
       $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
       $this->definition['allow_token'] = isset($value['allow_token']) ? $value['allow_token'] : FALSE;
+      $this->definition['allow_expose'] = isset($value['allow_expose']) ? $value['allow_expose'] : FALSE;
       $this->definition = $value + $this->definition;
     }
   }
@@ -211,8 +211,8 @@ class PatternDefinitionSetting implements \ArrayAccess {
    * @return string
    *   Property value.
    */
-  public function isExposeable() {
-    return $this->definition['exposable'];
+  public function allowExpose() {
+    return $this->definition['allow_expose'];
   }
 
   /**
@@ -223,8 +223,8 @@ class PatternDefinitionSetting implements \ArrayAccess {
    *
    * @return $this
    */
-  public function setExposeable($exposable) {
-    $this->definition['exposable'] = $exposable;
+  public function setAllowExpose($allow_expose) {
+    $this->definition['allow_expose'] = $allow_expose;
     return $this;
   }
 

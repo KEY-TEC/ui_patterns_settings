@@ -4,7 +4,6 @@ namespace Drupal\ui_patterns_settings;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
@@ -18,6 +17,13 @@ use Drupal\Core\Entity\EntityMalformedException;
 class UiPatternsSettings {
 
   /**
+   * Cached pattern definition settings.
+   *
+   * @var \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[]
+   */
+  public static $settings;
+
+  /**
    * Get pattern manager setting instance.
    *
    * @return \Drupal\ui_patterns_settings\UiPatternsSettingsManager
@@ -27,20 +33,40 @@ class UiPatternsSettings {
     return \Drupal::service('plugin.manager.ui_patterns_settings');
   }
 
+
+  /**
+   * Get config manager instance.
+   *
+   * @return \Drupal\ui_patterns_settings\ConfigManager
+   *   UI Patterns setting config manager.
+   */
+  public static function getConfigManager() {
+    return \Drupal::service('ui_patterns_settings.config_manager');
+  }
+
+  /**
+   * @param \Drupal\Core\Entity\ContentEntityBase $entity
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
+   *
+   * @return array
+   */
   private static function preprocessExposedFields(ContentEntityBase $entity, PatternDefinition $definition) {
     $processed_settings = [];
-    $fields = $entity->getFields();
-    foreach ($fields as $field) {
-      $config = $field->getFieldDefinition()->getConfig($entity->bundle());
-      $use_pattern = $config->getThirdPartySetting('ui_patterns_settings','use_pattern');
-      $pattern_setting = $config->getThirdPartySetting('ui_patterns_settings','pattern_setting');
-      if ($use_pattern) {
-        $settingType = UiPatternsSettings::createSettingType($definition, $pattern_setting);
-        $processed_settings[$pattern_setting] = $settingType->preprocessExposedField($field);
+    $mapping = self::getConfigManager()->getMappingByType($entity->getEntityTypeId());
+    foreach ($mapping as $field => $pattern_setting) {
+      if ($entity->hasField($field)) {
+        [$pattern_id, $setting_id] = explode('::', $pattern_setting);
+        if ($setting_id !== 'variant') {
+          $pattern_definition = UiPatterns::getPatternDefinition($pattern_id);
+          $setting_definition = UiPatternsSettings::getPatternDefinitionSetting($pattern_definition, $setting_id);
+          $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
+          $processed_settings[$setting_id] = $settingType->preprocessExposedField($entity->get($field));
+        }
       }
     }
     return $processed_settings;
   }
+
   /**
    * Preprocess all settings variables.
    *
@@ -106,7 +132,10 @@ class UiPatternsSettings {
         }
       }
       $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
-      $processed_settings[$key] = $settingType->preprocess($value, $context);
+      $processed_value = $settingType->preprocess($value, $context);
+      if (!isset($processed_settings[$key]) || !empty($processed_value) ) {
+        $processed_settings[$key] = $processed_value;
+      }
     }
     return $processed_settings;
 
@@ -115,9 +144,9 @@ class UiPatternsSettings {
   public static function getExposedPatternDefinition(PatternDefinition $definition, $field_storage_type) {
     $additional = $definition->getAdditional();
     $exposed = [];
-    if (isset($additional['exposable_variants']) &&
-      $additional['exposable_variants'] === TRUE && $field_storage_type === 'list_string') {
-      $exposed[$definition->id() . '::variants'] = [
+    if (isset($additional['allow_variant_expose']) &&
+      $additional['allow_variant_expose'] === TRUE && $field_storage_type === 'list_string') {
+      $exposed[$definition->id() . '::variant'] = [
         'label' => $definition->getLabel() . ' Variants',
         'definition' => $definition,
         ];
@@ -126,7 +155,7 @@ class UiPatternsSettings {
     $settings = self::getPatternDefinitionSettings($definition);
     /** @var PatternDefinitionSetting $setting */
     foreach ($settings as $setting) {
-      if ($setting->isExposeable()
+      if ($setting->allowExpose()
       ) {
         $setting_type = self::createSettingType($definition, $setting);
         if (in_array($field_storage_type, $setting_type->fieldStorageExposableTypes())) {
@@ -168,6 +197,18 @@ class UiPatternsSettings {
   }
 
   /**
+   * Get setting defintion for a pattern and a setting name.
+   *
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
+   *   The pattern definition.
+   * @param $setting_name
+   *   The setting name.
+   */
+  public static function getPatternDefinitionSetting(PatternDefinition $definition, $setting_name) {
+    $definitions = self::getPatternDefinitionSettings($definition);
+    return isset($definitions[$setting_name]) ? $definitions[$setting_name] : NULL;
+  }
+  /**
    * Get setting definitions for a pattern definition.
    *
    * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
@@ -177,6 +218,9 @@ class UiPatternsSettings {
    *   Setting pattern definitons.
    */
   public static function getPatternDefinitionSettings(PatternDefinition $definition) {
+    if (self::$settings !== NULL) {
+      return self::$settings;
+    }
     $additional = $definition->getAdditional();
     $settings_ary = isset($additional['settings']) ? $additional['settings'] : [];
     $settings = [];
@@ -185,6 +229,7 @@ class UiPatternsSettings {
         $settings[$key] = new PatternDefinitionSetting($key, $setting_ary);
       }
     }
+    self::$settings = $settings;
     return $settings;
   }
 
