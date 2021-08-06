@@ -93,7 +93,8 @@ class ConfigManager {
     if (isset($this->typeMap[$type])) {
       return $this->typeMap[$type];
     }
-    $map = $this->config->get('mapping');
+    $map = is_array($this->config->get('mapping')) ? $this->config->get('mapping') : [];
+
     foreach ($map as $field_id => $pattern_id) {
       [$field_type, $field_name] = explode('--', $field_id);
       $this->typeMap[$field_type][$field_name] = $pattern_id;
