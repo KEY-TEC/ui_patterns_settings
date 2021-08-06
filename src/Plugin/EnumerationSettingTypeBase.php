@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Plugin;
 
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 
 /**
@@ -30,6 +31,20 @@ abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase {
    */
   protected function getEnumerationType(PatternDefinitionSetting $def) {
     return $def->getValue('enumeration_type');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function alterFieldStorage(FieldStorageConfig $storage_config) {
+    $storage_config->setSetting('allowed_values_function', 'ui_patterns_settings_allowed_values_function');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldStorageExposableTypes() {
+    return ['list_string'];
   }
 
   /**

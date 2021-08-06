@@ -2,8 +2,9 @@
 
 namespace Drupal\ui_patterns_settings;
 
+use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\migrate\Plugin\migrate\process\Route;
+use Drupal\migrate_drupal\Plugin\migrate\source\ContentEntity;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
@@ -26,6 +27,20 @@ class UiPatternsSettings {
     return \Drupal::service('plugin.manager.ui_patterns_settings');
   }
 
+  private static function preprocessExposedFields(ContentEntityBase $entity, PatternDefinition $definition) {
+    $processed_settings = [];
+    $fields = $entity->getFields();
+    foreach ($fields as $field) {
+      $config = $field->getFieldDefinition()->getConfig($entity->bundle());
+      $use_pattern = $config->getThirdPartySetting('ui_patterns_settings','use_pattern');
+      $pattern_setting = $config->getThirdPartySetting('ui_patterns_settings','pattern_setting');
+      if ($use_pattern) {
+        $settingType = UiPatternsSettings::createSettingType($definition, $pattern_setting);
+        $processed_settings[$pattern_setting] = $settingType->preprocessExposedField($field);
+      }
+    }
+    return $processed_settings;
+  }
   /**
    * Preprocess all settings variables.
    *
@@ -48,6 +63,9 @@ class UiPatternsSettings {
     $definition = UiPatterns::getPatternDefinition($pattern_id);
     $context = [];
     $context['entity'] = $entity;
+    if ($entity instanceof ContentEntityBase) {
+      $processed_settings = self::preprocessExposedFields($entity, $definition);
+    }
     $settings_definition = UiPatternsSettings::getPatternDefinitionSettings($definition);
     foreach ($settings_definition as $key => $setting_definition) {
       if ($setting_definition->getForcedValue()) {
@@ -60,9 +78,9 @@ class UiPatternsSettings {
           $token_data[$entity->getEntityTypeId()] = $entity;
         }
         try {
-          $value = \Drupal::token()->replace($token_value, $token_data, ['clear' => TRUE]);
-        }
-        catch (EntityMalformedException $e) {
+          $value = \Drupal::token()
+            ->replace($token_value, $token_data, ['clear' => TRUE]);
+        } catch (EntityMalformedException $e) {
           if (!ui_patterns_settings_is_layout_builder_route()) {
             throw $e;
           }
@@ -94,6 +112,34 @@ class UiPatternsSettings {
 
   }
 
+  public static function getExposedPatternDefinition(PatternDefinition $definition, $field_storage_type) {
+    $additional = $definition->getAdditional();
+    $exposed = [];
+    if (isset($additional['exposable_variants']) &&
+      $additional['exposable_variants'] === TRUE && $field_storage_type === 'list_string') {
+      $exposed[$definition->id() . '::variants'] = [
+        'label' => $definition->getLabel() . ' Variants',
+        'definition' => $definition,
+        ];
+    }
+
+    $settings = self::getPatternDefinitionSettings($definition);
+    /** @var PatternDefinitionSetting $setting */
+    foreach ($settings as $setting) {
+      if ($setting->isExposeable()
+      ) {
+        $setting_type = self::createSettingType($definition, $setting);
+        if (in_array($field_storage_type, $setting_type->fieldStorageExposableTypes())) {
+          $exposed[$definition->id() . '::' . $setting->getName()] = [
+            'label' => $definition->getLabel() . ' ' . $setting->getLabel(),
+            'definition' => $definition,
+          ];
+        }
+      }
+    }
+    return $exposed;
+  }
+
   /**
    * Get pattern configuration for a pattern definition.
    *
@@ -107,19 +153,20 @@ class UiPatternsSettings {
     $additional = $definition->getAdditional();
     $configuration = isset($additional['configuration']) ? $additional['configuration'] : [];
     if (!empty($variant)) {
-        $variant_ob = $definition->getVariant($variant);
-        if ($variant_ob != NULL) {
-          $variant_ary = $variant_ob->toArray();
-          if (isset($variant_ary['configuration'])) {
-            $configuration = array_merge($configuration, $variant_ary['configuration']);
-          }
+      $variant_ob = $definition->getVariant($variant);
+      if ($variant_ob != NULL) {
+        $variant_ary = $variant_ob->toArray();
+        if (isset($variant_ary['configuration'])) {
+          $configuration = array_merge($configuration, $variant_ary['configuration']);
         }
+      }
     }
     if ($name !== NULL && isset($configuration[$name])) {
       return $configuration[$name];
     }
     return $configuration;
   }
+
   /**
    * Get setting definitions for a pattern definition.
    *
@@ -136,7 +183,6 @@ class UiPatternsSettings {
     if (!empty($settings_ary)) {
       foreach ($settings_ary as $key => $setting_ary) {
         $settings[$key] = new PatternDefinitionSetting($key, $setting_ary);
-
       }
     }
     return $settings;

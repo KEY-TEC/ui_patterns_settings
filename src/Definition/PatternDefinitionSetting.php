@@ -43,12 +43,15 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['preview'] = NULL;
       $this->definition['group'] = NULL;
       $this->definition['allow_token'] = FALSE;
+      $this->definition['exposable'] = FALSE;
+
     }
     else {
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
       $this->definition['group'] = isset($value['group']) ? $value['group'] : NULL;
       $this->definition['label'] = $value['label'];
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
+      $this->definition['exposable'] = isset($value['exposable']) ? $value['exposable'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
       $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
@@ -199,6 +202,29 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function setForcedValue($forcedValue) {
     $this->definition['forced_value'] = $forcedValue;
+    return $this;
+  }
+
+  /**
+   * Get exposable property.
+   *
+   * @return string
+   *   Property value.
+   */
+  public function isExposeable() {
+    return $this->definition['exposable'];
+  }
+
+  /**
+   * Set Exposable property.
+   *
+   * @param string $exposable
+   *   Property value.
+   *
+   * @return $this
+   */
+  public function setExposeable($exposable) {
+    $this->definition['exposable'] = $exposable;
     return $this;
   }
 

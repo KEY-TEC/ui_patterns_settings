@@ -3,6 +3,8 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Core\Field\FieldConfigBase;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 
 /**
@@ -58,6 +60,18 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
   public function preprocess($value, array $context);
 
   /**
+   * Returns the processed setting variable for an exposed
+   * field.
+   *
+   * @param FieldConfigBase $field
+   *   The stored value.
+   *
+   * @return mixed
+   *   The processed value.
+   */
+  public function preprocessExposedField(FieldConfigBase $field);
+
+  /**
    * Returns the settings configuration form.
    *
    * @param array $form
@@ -71,4 +85,20 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
    */
   public function buildConfigurationForm(array $form, $value, $token_value, $form_type);
 
+  /**
+   * Alter the storage of a connected field storage.
+   *
+   * @param \Drupal\field\Entity\FieldStorageConfig $storage_config
+   *   The storage type
+   * @return mixed
+   */
+  public function alterFieldStorage(FieldStorageConfig $storage_config);
+
+  /**
+   * Returns the list to matching field types.
+   *
+   * @return []
+   *   The list of exposable field types
+   */
+  public function fieldStorageExposableTypes();
 }
