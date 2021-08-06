@@ -69,7 +69,7 @@ class ConfigManager {
     if (isset($this->variantMap[$type])) {
       return $this->variantMap[$type];
     }
-    $map = $this->config->get('mapping');
+    $map = is_array($this->config->get('mapping')) ? $this->config->get('mapping') : [];
     foreach ($map as $field_id => $pattern_string) {
       [$pattern_id, $setting_id] = explode('::', $pattern_string);
       [$entity_type_id, $field_name] = explode('--', $field_id);
