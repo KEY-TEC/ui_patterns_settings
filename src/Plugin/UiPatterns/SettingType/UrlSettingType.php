@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
+use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Url;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\TokenSettingTypeBase;
@@ -16,6 +17,21 @@ use Drupal\ui_patterns_settings\Plugin\TokenSettingTypeBase;
  */
 class UrlSettingType extends TokenSettingTypeBase {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldStorageExposableTypes() {
+    return ['link'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preprocessExposedField(FieldItemList $items) {
+    foreach ($items as $item) {
+      return $item->getUrl();
+    }
+  }
   /**
    * {@inheritdoc}
    */
