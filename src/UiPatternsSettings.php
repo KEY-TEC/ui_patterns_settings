@@ -21,7 +21,7 @@ class UiPatternsSettings {
    *
    * @var \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[]
    */
-  public static $settings;
+  private static $settings;
 
   /**
    * Get pattern manager setting instance.
