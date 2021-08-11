@@ -343,6 +343,10 @@ abstract class PatternSettingTypeBase extends PluginBase implements
     $form[$def->getName()]['#pattern_setting_definition'] = $def;
     $form[$def->getName()]['#pattern_definition'] = $this->patternDefinition;
 
+    if (!empty($def->getWeight())) {
+      $form[$def->getName()]['#weight'] = $def->getWeight();
+    }
+
     if ($def->getAllowToken()) {
       $form = $this->tokenForm($form, $token_value, $def);
       if (isset($form[$def->getName() . '_token'])) {

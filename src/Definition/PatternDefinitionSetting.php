@@ -42,13 +42,14 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['type'] = 'textfield';
       $this->definition['preview'] = NULL;
       $this->definition['group'] = NULL;
+      $this->definition['weight'] = NULL;
       $this->definition['allow_token'] = FALSE;
       $this->definition['allow_expose'] = FALSE;
-
     }
     else {
       $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
       $this->definition['group'] = isset($value['group']) ? $value['group'] : NULL;
+      $this->definition['weight'] = isset($value['weight']) ? $value['weight'] : NULL;
       $this->definition['label'] = $value['label'];
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
@@ -158,6 +159,27 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function setDefaultValue($defaultValue) {
     $this->definition['default_value'] = $defaultValue;
+    return $this;
+  }
+
+  /**
+   * Get weight value property.
+   *
+   * @return mixed
+   *   Property value.
+   */
+  public function getWeight() {
+    return $this->definition['weight'];
+  }
+
+  /**
+   * Set weight property.
+   *
+   * @return mixed
+   *   Property value.
+   */
+  public function setWeight($weight) {
+    $this->definition['weight'] = $weight;
     return $this;
   }
 
