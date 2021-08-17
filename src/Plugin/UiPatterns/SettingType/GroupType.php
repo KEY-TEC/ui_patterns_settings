@@ -24,6 +24,9 @@ class GroupType extends PatternSettingTypeBase {
       '#type' => !empty($def->getValue('group_type')) ? $def->getValue('group_type') : 'fieldset',
       '#title' => $def->getLabel(),
     ];
+    if (!empty($def->getDescription())) {
+      $form[$def->getName()]['#description'] = $def->getDescription();
+    }
     return $form;
   }
 
