@@ -47,10 +47,11 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['allow_expose'] = FALSE;
     }
     else {
-      $this->definition['name'] = !isset($value['name']) ? $name : $value['name'];
+      $name_key = !isset($value['name']) ? $name : $value['name'];
+      $this->definition['name'] = $name_key;
       $this->definition['group'] = isset($value['group']) ? $value['group'] : NULL;
       $this->definition['weight'] = isset($value['weight']) ? $value['weight'] : NULL;
-      $this->definition['label'] = $value['label'];
+      $this->definition['label'] = isset($value['label']) ? $value['label'] : $name_key;
       $this->definition['required'] = isset($value['required']) ? $value['required'] : FALSE;
       $this->definition['default_value'] = isset($value['default_value']) ? $value['default_value'] : NULL;
       $this->definition['preview'] = isset($value['preview']) ? $value['preview'] : NULL;
