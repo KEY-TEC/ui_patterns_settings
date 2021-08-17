@@ -19,7 +19,7 @@ class RadiosSettingType extends EnumerationSettingTypeBase {
    * {@inheritdoc}
    */
   protected function getEnumerationType(PatternDefinitionSetting $def) {
-    return 'select';
+    return 'radios';
   }
 
 }
