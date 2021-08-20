@@ -5,7 +5,7 @@ namespace Drupal\ui_patterns_settings\Definition;
 use Drupal\ui_patterns\Definition\ArrayAccessDefinitionTrait;
 
 /**
- * Class PatternDefinitionSetting.
+ * Pattern setting definition class.
  *
  * @package Drupal\ui_patterns_settings\Definition
  */
@@ -241,7 +241,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
   /**
    * Set Exposable property.
    *
-   * @param string $exposable
+   * @param string $allow_expose
    *   Property value.
    *
    * @return $this

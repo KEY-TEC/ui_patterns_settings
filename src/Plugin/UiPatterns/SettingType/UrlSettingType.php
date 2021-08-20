@@ -32,6 +32,7 @@ class UrlSettingType extends TokenSettingTypeBase {
       return $item->getUrl();
     }
   }
+
   /**
    * {@inheritdoc}
    */

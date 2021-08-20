@@ -5,6 +5,7 @@
  * Contains ui_patterns_settings.module.
  */
 
+use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 use Drupal\ui_patterns_settings\Plugin\Layout\PatternSettingsLayout;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -21,10 +22,13 @@ function ui_patterns_settings_ui_patterns_layouts_display_settings_form_alter(&$
   SettingsFormBuilder::layoutForm($form, $definition, $configuration);
 }
 
+/**
+ * Implements hook_form_field_storage_config_edit_form_alter().
+ */
 function ui_patterns_settings_form_field_storage_config_edit_form_alter(&$form, FormStateInterface $form_state) {
   /** @var \Drupal\field\Entity\FieldStorageConfig $entity */
   $entity = $form_state->getFormObject()->getEntity();
-  array_unshift($form['actions']['submit']['#submit'],'ui_patterns_settings_form_field_storage_config_edit_form_submit');
+  array_unshift($form['actions']['submit']['#submit'], 'ui_patterns_settings_form_field_storage_config_edit_form_submit');
 
   $definitions = UiPatterns::getPatternDefinitions();
   $settings_options = [];
@@ -35,11 +39,12 @@ function ui_patterns_settings_form_field_storage_config_edit_form_alter(&$form, 
     }
   }
   if (count($settings_options) > 0) {
+    $mapping = UiPatternsSettings::getConfigManager()->getMapping($entity->id());
     $form['settings']['use_pattern'] = [
       '#type' => 'checkbox',
       '#title' => t('Expose pattern setting'),
-      '#default_value' => $entity->getThirdPartySetting('ui_patterns_settings', 'use_pattern'),
-      '#description' => ''
+      '#default_value' => $mapping !== NULL,
+      '#description' => '',
     ];
 
     $form['settings']['pattern_setting'] = [
@@ -51,11 +56,14 @@ function ui_patterns_settings_form_field_storage_config_edit_form_alter(&$form, 
           ':input[name="settings[use_pattern]"]' => ['checked' => FALSE],
         ],
       ],
-      '#default_value' => $entity->getThirdPartySetting('ui_patterns_settings', 'pattern_setting'),
+      '#default_value' => $mapping,
     ];
   }
 }
 
+/**
+ * Implements hook_form_field_storage_config_edit_form_submit().
+ */
 function ui_patterns_settings_form_field_storage_config_edit_form_submit(array $form, FormStateInterface $form_state) {
   $settings = $form_state->getValue('settings');
   /** @var \Drupal\field\Entity\FieldStorageConfig $entity */
@@ -63,12 +71,16 @@ function ui_patterns_settings_form_field_storage_config_edit_form_submit(array $
 
   if (isset($settings['use_pattern']) && $settings['use_pattern'] === 1) {
     UiPatternsSettings::getConfigManager()->addMapping($entity->id(), $settings['pattern_setting']);
-  } else {
+  }
+  else {
     UiPatternsSettings::getConfigManager()->addMapping($entity->id(), NULL);
   }
 
 }
 
+/**
+ * Implements hook_entity_field_storage_info_alter().
+ */
 function ui_patterns_settings_entity_field_storage_info_alter(&$fields, EntityTypeInterface $entity_type) {
   /** @var \Drupal\field\Entity\FieldStorageConfig $field */
   foreach ($fields as $field) {
@@ -82,15 +94,20 @@ function ui_patterns_settings_entity_field_storage_info_alter(&$fields, EntityTy
         ) {
           $type = UiPatternsSettings::createSettingType($pattern_definition, $settings_definition);
           $type->alterFieldStorage($field);
-        } elseif ($pattern_definition !== NULL && $setting_id === 'variant') {
+        }
+        elseif ($pattern_definition !== NULL && $setting_id === 'variant') {
           $field->setSetting('allowed_values_function', 'ui_patterns_settings_allowed_values_function');
         }
         else {
           \Drupal::messenger()->addError('No pattern setting %setting found');
         }
-      } catch (\Exception $e) {
+      }
+      catch (\Exception $e) {
         \Drupal::messenger()->addError($e->getMessage());
       }
+    }
+    else {
+      $field->setSetting('allowed_values_function', NULL);
     }
   }
 }
@@ -99,6 +116,7 @@ function ui_patterns_settings_entity_field_storage_info_alter(&$fields, EntityTy
  * The storage config.
  *
  * @param \Drupal\field\Entity\FieldStorageConfig $storage_config
+ *   The field storage config.
  *
  * @return string[]
  *   The allowed list of the enumeration.
@@ -109,7 +127,8 @@ function ui_patterns_settings_allowed_values_function(FieldStorageConfig $storag
   $settings_definition = UiPatternsSettings::getPatternDefinitionSetting($pattern_definition, $setting_key);
   if ($pattern_definition !== NULL && $settings_definition !== NULL) {
     return $settings_definition->getOptions();
-  } elseif ($pattern_definition !== NULL && $setting_key === 'variant') {
+  }
+  elseif ($pattern_definition !== NULL && $setting_key === 'variant') {
     return $pattern_definition->getVariantsAsOptions();
   }
   return [];
@@ -156,7 +175,7 @@ function ui_patterns_settings_element_info_alter(array &$info) {
   foreach ($info as &$elm) {
     if (isset($elm['#process'])) {
       array_unshift($elm['#process'], [
-        \Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase::class,
+        PatternSettingTypeBase::class,
         "formGroupProcess",
       ]);
     }
@@ -203,11 +222,10 @@ function ui_patterns_settings_field_group_pre_render_alter(&$element, $group, $r
   $element['#settings'] = isset($group->format_settings['pattern_settings'][$pattern_id]) ? $group->format_settings['pattern_settings'][$pattern_id] : NULL;
 }
 
-
 /**
  * Returns true if current route is a layout builder route.
  *
- * @return boolean
+ * @return bool
  *   True if is layout builder route
  */
 function ui_patterns_settings_is_layout_builder_route() {

@@ -46,7 +46,7 @@ class PatternSettings implements TrustedCallbackInterface {
       $mappings = UiPatternsSettings::getConfigManager()->findVariantMappings($entity->getEntityTypeId());
       foreach ($mappings as $field_name) {
         if ($entity->hasField($field_name) && !empty($entity->get($field_name)->value)) {
-          $element['#variant']  = $entity->get($field_name)->value;
+          $element['#variant'] = $entity->get($field_name)->value;
         }
       }
     }

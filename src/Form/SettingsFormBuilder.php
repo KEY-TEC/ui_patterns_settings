@@ -20,13 +20,13 @@ class SettingsFormBuilder {
    * generate Browse token button which click on the hidden link.
    * This will reduce the number of browse buttons.
    *
-   * @param $form
+   * @param array $form
    *   The form.
    */
-  private static function buildTokenLink(&$form) {
+  private static function buildTokenLink(array &$form) {
     $content_entity_types = [];
     $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
-    /* @var $definition EntityTypeInterface */
+    /** @var EntityTypeInterface $definition */
     foreach ($entity_type_definations as $definition) {
       if ($definition instanceof ContentEntityType) {
         $content_entity_types[] = $definition->id();

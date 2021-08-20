@@ -2,14 +2,15 @@
 
 namespace Drupal\ui_patterns_settings\Plugin;
 
-use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
-use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Base class for setting types with tokens.
+ */
 abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements ContainerFactoryPluginInterface {
 
   /**

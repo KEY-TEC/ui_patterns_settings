@@ -5,7 +5,7 @@ namespace Drupal\ui_patterns_settings\Plugin\Layout;
 use Drupal\ui_patterns_layouts\Plugin\Layout\PatternLayout;
 
 /**
- * Class PatternSettingsLayout.
+ * Layout class for patterns with settings.
  *
  * @package Drupal\ui_patterns_settings\Plugin\Layout
  */

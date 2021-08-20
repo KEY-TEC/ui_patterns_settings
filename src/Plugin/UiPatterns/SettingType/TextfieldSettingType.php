@@ -23,7 +23,7 @@ class TextfieldSettingType extends PatternSettingTypeBase {
       '#type' => 'textfield',
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
-      '#default_value' => $this->getValue($value)
+      '#default_value' => $this->getValue($value),
     ];
 
     $this->handleInput($form[$def->getName()], $def, $form_type);

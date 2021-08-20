@@ -33,7 +33,6 @@ class UiPatternsSettings {
     return \Drupal::service('plugin.manager.ui_patterns_settings');
   }
 
-
   /**
    * Get config manager instance.
    *
@@ -45,10 +44,15 @@ class UiPatternsSettings {
   }
 
   /**
+   * Preprocess exposed settings variables.
+   *
    * @param \Drupal\Core\Entity\ContentEntityBase $entity
+   *   The entity.
    * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
+   *   The pattern definition.
    *
    * @return array
+   *   The processed variables.
    */
   private static function preprocessExposedFields(ContentEntityBase $entity, PatternDefinition $definition) {
     $processed_settings = [];
@@ -106,7 +110,8 @@ class UiPatternsSettings {
         try {
           $value = \Drupal::token()
             ->replace($token_value, $token_data, ['clear' => TRUE]);
-        } catch (EntityMalformedException $e) {
+        }
+        catch (EntityMalformedException $e) {
           if (!ui_patterns_settings_is_layout_builder_route()) {
             throw $e;
           }
@@ -133,7 +138,7 @@ class UiPatternsSettings {
       }
       $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
       $processed_value = $settingType->preprocess($value, $context);
-      if (!isset($processed_settings[$key]) || !empty($processed_value) ) {
+      if (!isset($processed_settings[$key]) || !empty($processed_value)) {
         $processed_settings[$key] = $processed_value;
       }
     }
@@ -141,6 +146,24 @@ class UiPatternsSettings {
 
   }
 
+  /**
+   * Exposed pattern setting definitions.
+   *
+   * Returns a list of all exposed pattern setting definitions
+   * filtered by the provided field storage type.
+   *
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
+   *   The pattern definition.
+   * @param string $field_storage_type
+   *   The field storage type.
+   *
+   * @return array
+   *   The configuration array.
+   *   Key: pattern::setting.
+   *   Keys:
+   *     'label' = 'The setting label'
+   *     'definition' = The pattern definition
+   */
   public static function getExposedPatternDefinition(PatternDefinition $definition, $field_storage_type) {
     $additional = $definition->getAdditional();
     $exposed = [];
@@ -149,11 +172,11 @@ class UiPatternsSettings {
       $exposed[$definition->id() . '::variant'] = [
         'label' => $definition->getLabel() . ' Variants',
         'definition' => $definition,
-        ];
+      ];
     }
 
     $settings = self::getPatternDefinitionSettings($definition);
-    /** @var PatternDefinitionSetting $setting */
+    /** @var \Drupal\ui_patterns\Definition\PatternDefinitionSetting $setting */
     foreach ($settings as $setting) {
       if ($setting->allowExpose()
       ) {
@@ -174,8 +197,12 @@ class UiPatternsSettings {
    *
    * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
    *   The definition.
+   * @param string $variant
+   *   The pattern variant.
+   * @param string $name
+   *   The configuration key.
    *
-   * @return \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting[]
+   * @return mixed
    *   Setting pattern configuration.
    */
   public static function getPatternConfiguration(PatternDefinition $definition, $variant = NULL, $name = NULL) {
@@ -197,17 +224,18 @@ class UiPatternsSettings {
   }
 
   /**
-   * Get setting defintion for a pattern and a setting name.
+   * Get setting definition for a pattern and a setting name.
    *
    * @param \Drupal\ui_patterns\Definition\PatternDefinition $definition
    *   The pattern definition.
-   * @param $setting_name
+   * @param string $setting_name
    *   The setting name.
    */
   public static function getPatternDefinitionSetting(PatternDefinition $definition, $setting_name) {
     $definitions = self::getPatternDefinitionSettings($definition);
     return isset($definitions[$setting_name]) ? $definitions[$setting_name] : NULL;
   }
+
   /**
    * Get setting definitions for a pattern definition.
    *
@@ -236,8 +264,10 @@ class UiPatternsSettings {
   /**
    * Create setting type plugin.
    *
+   * @param \Drupal\ui_patterns\Definition\PatternDefinition $pattern_definition
+   *   The pattern definition.
    * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $setting_defintion
-   *   The setting defintion.
+   *   The setting definition.
    *
    * @return \Drupal\ui_patterns_settings\Plugin\PatternSettingTypeInterface
    *   UI Patterns setting manager instance.

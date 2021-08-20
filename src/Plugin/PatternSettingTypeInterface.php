@@ -3,7 +3,6 @@
 namespace Drupal\ui_patterns_settings\Plugin;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
-use Drupal\Core\Field\FieldConfigBase;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
@@ -61,10 +60,9 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
   public function preprocess($value, array $context);
 
   /**
-   * Returns the processed setting variable for an exposed
-   * field.
+   * Returns the processed setting variable for an exposed field.
    *
-   * @param FieldItemList $field
+   * @param \Drupal\Core\Field\FieldItemList $field
    *   The stored value.
    *
    * @return mixed
@@ -90,16 +88,16 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
    * Alter the storage of a connected field storage.
    *
    * @param \Drupal\field\Entity\FieldStorageConfig $storage_config
-   *   The storage type
-   * @return mixed
+   *   The storage type.
    */
   public function alterFieldStorage(FieldStorageConfig $storage_config);
 
   /**
    * Returns the list to matching field types.
    *
-   * @return []
+   * @return array
    *   The list of exposable field types
    */
   public function fieldStorageExposableTypes();
+
 }
