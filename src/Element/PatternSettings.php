@@ -97,6 +97,8 @@ class PatternSettings implements TrustedCallbackInterface {
       if (isset($element['#layout'])) {
         $alter_context['#layout'] = $element['#layout'];
       }
+      $alter_context['#pattern_id'] = $pattern_id;
+      $alter_context['#variant'] = $variant;
       $alter_context['#pattern_context'] = $context;
       \Drupal::moduleHandler()->alter('ui_pattern_settings_settings', $settings, $alter_context);
       unset($element['#settings']);
