@@ -40,6 +40,7 @@ class PatternSettings implements TrustedCallbackInterface {
   public static function processSettings(array $element, $preview = FALSE) {
     $alter_context = [];
     $context = $element['#context'];
+    $pattern_id = $element['#id'];
     /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
     $entity = $context->getProperty('entity');
     if ($entity !== NULL) {
@@ -76,6 +77,14 @@ class PatternSettings implements TrustedCallbackInterface {
         // Do nothing inside layout builder.
       }
     }
+    $variant_alter_context['#pattern_id'] = $pattern_id;
+    if (isset($element['#layout'])) {
+      $variant_alter_context['#layout'] = $element['#layout'];
+    }
+    $variant_alter_context['#pattern_context'] = $context;
+    $variant = $element['#variant'];
+    \Drupal::moduleHandler()->alter('ui_pattern_settings_variant', $variant, $variant_alter_context);
+    $element['#variant'] = $variant;
     // Make sure we don't render anything in case fields are empty.
     if (self::hasSettings($element)) {
       $settings = isset($element['#settings']) ? $element['#settings'] : [];
@@ -90,7 +99,6 @@ class PatternSettings implements TrustedCallbackInterface {
         $configuration = $layout->getConfiguration();
         $settings = isset($configuration['pattern']['settings']) ? $configuration['pattern']['settings'] : [];
       }
-      $pattern_id = $element['#id'];
       $entity = $context->getProperty('entity');
       $variant = isset($element['#variant']) ? $element['#variant'] : NULL;
       $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $variant, $preview, $entity);
