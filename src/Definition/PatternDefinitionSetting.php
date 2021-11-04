@@ -63,6 +63,16 @@ class PatternDefinitionSetting implements \ArrayAccess {
   }
 
   /**
+   * Overwrite setting definition.
+   *
+   * @param $definitions
+   *   The overwritten definitions.
+   */
+  public function setDefinitions($definitions) {
+    $this->definition = $definitions + $this->definition;
+  }
+
+  /**
    * Return any definition value.
    *
    * @return string

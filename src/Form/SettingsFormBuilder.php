@@ -173,6 +173,15 @@ class SettingsFormBuilder {
     foreach ($variants as $variant) {
       $variant_ary = $variant->toArray();
       $settings = isset($variant_ary['settings']) ? $variant_ary['settings'] : [];
+
+      // Variants may have definition overwrites.
+      // This should not lead to hide them. So unset them before.
+      foreach ($settings as $name => $setting) {
+        if (is_array($setting) && isset($setting['definition']) && empty($setting['value'])) {
+          unset($settings[$name]);
+        }
+      }
+
       foreach ($settings as $name => $setting) {
         if (isset($fieldset[$name])) {
           // Add an or before a new state begins.
@@ -184,7 +193,6 @@ class SettingsFormBuilder {
           if (isset($fieldset[$name . '_token'])) {
             $fieldset[$name . '_token']['#states']['invisible'][][$select_selector]['value'] = $variant->getName();
           }
-
         }
       }
     }

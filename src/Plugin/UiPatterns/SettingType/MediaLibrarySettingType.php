@@ -2,6 +2,7 @@
 
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
+use Drupal\Core\Field\FieldItemList;
 use Drupal\media\Entity\Media;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
@@ -32,12 +33,12 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
       $media = Media::load($media_id);
     }
     else {
-      return ['#type' => 'markup', '#markup' => ''];
+      return '';
     }
 
     $image_style = $def->getValue('image_style');
     if (empty($image_style) === FALSE) {
-      $image_uri = $media->image->entity !== NULL ? $media->image->uri : NULL;
+      $image_uri = $media->field_media_image->entity !== NULL ? $media->field_media_image->entity->uri->value : NULL;
       if ($image_uri !== NULL) {
         return [
           '#theme' => 'image_style',
@@ -71,9 +72,14 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
    * {@inheritdoc}
    */
   public function fieldStorageExposableTypes() {
-    return ['media'];
+    return ['entity_reference'];
   }
 
+  public function preprocessExposedField(FieldItemList $items) {
+    foreach ($items as $item) {
+      return $item->entity->id();
+    }
+  }
   /**
    * {@inheritdoc}
    */

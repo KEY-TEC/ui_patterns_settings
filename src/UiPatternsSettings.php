@@ -118,6 +118,10 @@ class UiPatternsSettings {
           // Do nothing inside layout builder.
         }
       }
+      // Use exposed field value if no other setting is provided
+      elseif (isset($processed_settings[$key]) && empty($settings[$key])) {
+        $value = $processed_settings[$key];
+      }
       elseif (isset($settings[$key])) {
         $value = $settings[$key];
       }
@@ -132,15 +136,23 @@ class UiPatternsSettings {
         if ($variant_ob != NULL) {
           $variant_ary = $variant_ob->toArray();
           if (isset($variant_ary['settings']) && isset($variant_ary['settings'][$key])) {
-            $value = $variant_ary['settings'][$key];
+            // Overwrite settings definition.
+            // Allow variants to overwrite settings configuration.
+            if (isset($variant_ary['settings'][$key]['definition']) && is_array($variant_ary['settings'][$key]['definition'])) {
+              $value = isset($variant_ary['settings'][$key]['value']) ? $variant_ary['settings'][$key]['value'] : $value;
+              if (isset($variant_ary['settings'][$key]['definition'])) {
+                $setting_definition = clone $setting_definition;
+                $setting_definition->setDefinitions($variant_ary['settings'][$key]['definition']);
+              }
+            } else {
+              $value = $variant_ary['settings'][$key];
+            }
           }
         }
       }
-      $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
-      $processed_value = $settingType->preprocess($value, $context);
-      if (!isset($processed_settings[$key]) || !empty($processed_value)) {
-        $processed_settings[$key] = $processed_value;
-      }
+      $setting_type = UiPatternsSettings::createSettingType($definition, $setting_definition);
+      $processed_value = $setting_type->preprocess($value, $context);
+      $processed_settings[$key] = $processed_value;
     }
     return $processed_settings;
 

@@ -13,6 +13,9 @@ foo_settings:
       label: Blue
       settings:
         textfield: blue
+        media_style:
+          definition:
+            image_style: 'large'
   settings:
     textfield:
       type: textfield
@@ -33,6 +36,11 @@ foo_settings:
       type: media_library
       label: Media Library
       view_mode: 'default'
+    media_style:
+      type: media_library
+      label: Media Style
+      allow_expose: true
+      image_style: 'medium'
     url:
       type: url
       label: Url
