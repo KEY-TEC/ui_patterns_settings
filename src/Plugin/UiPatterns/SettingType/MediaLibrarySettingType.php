@@ -50,11 +50,11 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
 
     $responsive_image_style = $def->getValue('responsive_image_style');
     if (empty($responsive_image_style) === FALSE) {
-      $image_uri = $media->image->entity !== NULL ? $media->image->uri : NULL;
+      $image_uri = $media->field_media_image->entity !== NULL ? $media->field_media_image->entity->uri->value : NULL;
       if ($image_uri !== NULL) {
         return [
-          '#theme' => 'responsive_image_style',
-          '#responsive_image_style_id' => $image_style,
+          '#theme' => 'responsive_image',
+          '#responsive_image_style_id' => $responsive_image_style,
           '#uri' => $image_uri,
         ];
       }
