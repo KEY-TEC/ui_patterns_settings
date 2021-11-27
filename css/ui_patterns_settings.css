@@ -24,13 +24,13 @@
 }
 
 .js-ui-patterns-settings__wrapper .js-ui-patterns-settings__token-wrapper > * {
-  display: none;
+  display: none !important;
 }
 
 .js-ui-patterns-settings__wrapper.js-ui-patterns-settings--token-has-value > .js-ui-patterns-settings__input-wrapper > * {
-  display: none;
+  display: none !important;
 }
 
 .js-ui-patterns-settings__wrapper.js-ui-patterns-settings--token-has-value > .js-ui-patterns-settings__token-wrapper > * {
-  display: block;
+  display: block !important;
 }
