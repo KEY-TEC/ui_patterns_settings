@@ -43,7 +43,7 @@ class PatternSettings implements TrustedCallbackInterface {
     $pattern_id = $element['#id'];
     /** @var \Drupal\Core\Entity\ContentEntityBase $entity */
     $entity = $context->getProperty('entity');
-    if ($entity !== NULL) {
+    if ($context->getType() === 'layout' && $entity !== NULL) {
       $mappings = UiPatternsSettings::getConfigManager()->findVariantMappings($entity->getEntityTypeId());
       foreach ($mappings as $field_name) {
         if ($entity->hasField($field_name) && !empty($entity->get($field_name)->value)) {
