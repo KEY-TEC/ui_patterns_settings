@@ -30,4 +30,11 @@ class BooleanSettingType extends PatternSettingTypeBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldStorageExposableTypes() {
+    return ['boolean'];
+  }
+
 }
