@@ -251,3 +251,18 @@ function ui_patterns_settings_layout_alter(&$definitions) {
     }
   }
 }
+
+/**
+ * Implements hook_ui_patterns_info_alter().
+ */
+function ui_patterns_settings_ui_patterns_info_alter(&$definitions) {
+  /** @var PatternDefinition $definition */
+  foreach ($definitions as $definition) {
+    $settings = UiPatternsSettings::getPatternDefinitionSettings($definition);
+    foreach ($settings as $setting) {
+      if ($setting->getExposeAsField()) {
+        $definition->setField($setting->getName(), $setting->getLabel());
+      }
+    }
+  }
+}

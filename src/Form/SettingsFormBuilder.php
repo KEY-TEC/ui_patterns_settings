@@ -3,6 +3,8 @@
 namespace Drupal\ui_patterns_settings\Form;
 
 use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Element\Form;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\UiPatternsSettings;

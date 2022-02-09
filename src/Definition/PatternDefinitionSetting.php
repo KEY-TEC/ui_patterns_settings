@@ -30,6 +30,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
     'options' => NULL,
     'form_visible' => TRUE,
     'allow_token' => FALSE,
+    'expose_as_field' => FALSE,
   ];
 
   /**
@@ -45,6 +46,7 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['weight'] = NULL;
       $this->definition['allow_token'] = FALSE;
       $this->definition['allow_expose'] = FALSE;
+      $this->definition['expose_as_field'] = FALSE;
     }
     else {
       $name_key = !isset($value['name']) ? $name : $value['name'];
@@ -58,6 +60,8 @@ class PatternDefinitionSetting implements \ArrayAccess {
       $this->definition['options'] = isset($value['options']) ? $value['options'] : NULL;
       $this->definition['allow_token'] = isset($value['allow_token']) ? $value['allow_token'] : FALSE;
       $this->definition['allow_expose'] = isset($value['allow_expose']) ? $value['allow_expose'] : FALSE;
+      $this->definition['expose_as_field'] = isset($value['expose_as_field']) ? $value['expose_as_field'] : FALSE;
+
       $this->definition = $value + $this->definition;
     }
   }
@@ -304,6 +308,28 @@ class PatternDefinitionSetting implements \ArrayAccess {
    */
   public function setFormVisible($visible) {
     $this->definition['form_visible'] = $visible;
+    return $this;
+  }
+  /**
+   * Get Type property.
+   *
+   * @return string
+   *   Property value.
+   */
+  public function getExposeAsField() {
+    return $this->definition['expose_as_field'];
+  }
+
+  /**
+   * Set Expose property.
+   *
+   * @param string $type
+   *   Property value.
+   *
+   * @return $this
+   */
+  public function setExposeAsField($expose_as_field) {
+    $this->definition['expose_as_field'] = $expose_as_field;
     return $this;
   }
 

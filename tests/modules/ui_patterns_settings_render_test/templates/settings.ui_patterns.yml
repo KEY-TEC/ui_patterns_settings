@@ -46,6 +46,7 @@ foo_settings:
       label: Url
       preview: Url
       allow_expose: true
+      expose_as_field: true
     boolean:
       type: boolean
       allow_token: true
