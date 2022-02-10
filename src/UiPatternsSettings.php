@@ -63,8 +63,10 @@ class UiPatternsSettings {
         if ($setting_id !== 'variant') {
           $pattern_definition = UiPatterns::getPatternDefinition($pattern_id);
           $setting_definition = UiPatternsSettings::getPatternDefinitionSetting($pattern_definition, $setting_id);
-          $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
-          $processed_settings[$setting_id] = $settingType->preprocessExposedField($entity->get($field));
+          if ($setting_definition !== NULL) {
+            $settingType = UiPatternsSettings::createSettingType($definition, $setting_definition);
+            $processed_settings[$setting_id] = $settingType->preprocessExposedField($entity->get($field));
+          }
         }
       }
     }

@@ -59,7 +59,7 @@ abstract class TokenSettingTypeBase extends PatternSettingTypeBase implements Co
   public function settingsPreprocess($value, array $context, PatternDefinitionSetting $def) {
     $return_value = '';
 
-    if (isset($value['input'])) {
+    if (is_array($value) && isset($value['input'])) {
       $value = $value['input'];
     }
 
