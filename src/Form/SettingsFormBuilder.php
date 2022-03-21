@@ -3,6 +3,8 @@
 namespace Drupal\ui_patterns_settings\Form;
 
 use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Element\Form;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns_settings\UiPatternsSettings;
@@ -24,20 +26,41 @@ class SettingsFormBuilder {
    *   The form.
    */
   private static function buildTokenLink(array &$form) {
-    $content_entity_types = [];
-    $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
-    /** @var EntityTypeInterface $definition */
-    foreach ($entity_type_definations as $definition) {
-      if ($definition instanceof ContentEntityType) {
-        $content_entity_types[] = $definition->id();
+
+    // Detecting current entity type.
+    // We don't have access to
+    $request = \Drupal::request();
+    $entity_type_id = $request->attributes->get('entity_type_id');
+    if (empty($entity_type_id)) {
+      /** @var \Drupal\layout_builder\Plugin\SectionStorage\DefaultsSectionStorage $section_storage */
+      $section_storage = $request->attributes->get('section_storage');
+      if ($section_storage !== NULL) {
+        $entity_type_id = explode('.', $section_storage->getStorageId())[0];
       }
     }
+
+    if (!empty($entity_type_id)) {
+      $content_entity_types[] = $entity_type_id;
+    } else {
+      $entity_type_definations = \Drupal::entityTypeManager()->getDefinitions();
+      /** @var EntityTypeInterface $definition */
+      foreach ($entity_type_definations as $definition) {
+        if ($definition instanceof ContentEntityType) {
+          $content_entity_types[] = $definition->id();
+        }
+      }
+    }
+
     $form['token_link'] = [
       '#prefix' => '<div id="ui-patterns-settings-token-link">',
       '#suffix' => '</div>',
       '#theme' => 'token_tree_link',
       '#token_types' => $content_entity_types,
-      '#show_restricted' => TRUE,
+      '#show_restricted' => FALSE,
+      '#show_nested' => FALSE,
+      '#global_types' => TRUE,
+      '#click_insert' => TRUE,
+      '#recursion_limit' => 3,
       '#weight' => 90,
     ];
   }

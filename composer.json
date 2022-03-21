@@ -35,6 +35,7 @@
         "drupal/ui_patterns": "~1.2",
         "drush/drush": "~10",
         "openeuropa/task-runner": "~1.0-beta3",
+        "drupal/ui_patterns_field_formatters": "^1.6",
         "phpro/grumphp": "~0.14"
     },
     "repositories": [
