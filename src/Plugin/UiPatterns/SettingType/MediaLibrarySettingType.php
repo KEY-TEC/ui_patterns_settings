@@ -77,7 +77,10 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
 
   public function preprocessExposedField(FieldItemList $items) {
     foreach ($items as $item) {
-      return $item->entity->id();
+
+      if ($item->entity !== NULL) {
+        return $item->entity->id();
+      }
     }
   }
   /**
