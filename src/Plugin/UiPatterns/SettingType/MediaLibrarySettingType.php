@@ -87,11 +87,15 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
    * {@inheritdoc}
    */
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
+    $media_id = $this->getValue($value);
+    if (!empty($media_id)) {
+      $media_id = Media::load($media_id) !== NULL ? $media_id : NULL;
+    }
     $form[$def->getName()] = [
       '#type' => 'media_library',
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
-      '#default_value' => $this->getValue($value),
+      '#default_value' => $media_id,
     ];
     $allowed_bundles = $def->getValue('allowed_bundles');
     if (!empty($allowed_bundles)) {
