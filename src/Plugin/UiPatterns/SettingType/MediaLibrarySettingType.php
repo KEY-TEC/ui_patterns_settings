@@ -31,6 +31,9 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
     if (intval($value)) {
       $media_id = $value;
       $media = Media::load($media_id);
+      if ($media === NULL) {
+        return '';
+      }
     }
     else {
       return '';
