@@ -31,7 +31,10 @@ class ColorisWidgetSettingType extends PatternSettingTypeBase {
     array $context,
     PatternDefinitionSetting $def
   ) {
-      return $value['coloris'] ?? '';
+    if (is_string($value) && !empty($value)) {
+      return $value;
+    }
+    return $value['coloris'] ?? '';
   }
   /**
    * {@inheritdoc}

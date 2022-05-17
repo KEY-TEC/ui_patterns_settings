@@ -80,18 +80,25 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
 
   public function preprocessExposedField(FieldItemList $items) {
     foreach ($items as $item) {
-      return $item->entity->id();
+      if ($item->entity !== NULL) {
+        return $item->entity->id();
+      }
     }
   }
+
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
+    $media_id = $this->getValue($value);
+    if (!empty($media_id)) {
+      $media_id = Media::load($media_id) !== NULL ? $media_id : NULL;
+    }
     $form[$def->getName()] = [
       '#type' => 'media_library',
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
-      '#default_value' => $this->getValue($value),
+      '#default_value' => $media_id,
     ];
     $allowed_bundles = $def->getValue('allowed_bundles');
     if (!empty($allowed_bundles)) {
