@@ -18,6 +18,13 @@ class SelectSettingType extends EnumerationSettingTypeBase {
   /**
    * {@inheritdoc}
    */
+  protected function getOptions(PatternDefinitionSetting $def) {
+    return $def->getOptions();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getEnumerationType(PatternDefinitionSetting $def) {
     return 'select';
   }

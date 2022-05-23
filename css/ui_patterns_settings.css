@@ -34,3 +34,17 @@
 .js-ui-patterns-settings__wrapper.js-ui-patterns-settings--token-has-value > .js-ui-patterns-settings__token-wrapper > * {
   display: block !important;
 }
+
+.ui-patterns-media-edit {
+  position: relative;
+}
+
+.media-library-edit__link {
+  position: absolute;
+  right: 0;
+  z-index: 10;
+}
+
+.media-library-form-element .fieldset-wrapper {
+  position: relative;
+}

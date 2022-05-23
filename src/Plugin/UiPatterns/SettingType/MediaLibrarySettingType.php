@@ -2,8 +2,11 @@
 
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
+use Drupal\media_library\MediaLibraryUiBuilder;
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 
@@ -21,7 +24,7 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
    * {@inheritdoc}
    */
   protected function getSettingTypeDependencies() {
-    return ['media_library_form_element'];
+    return ['media_library_form_element', 'media_library_edit'];
   }
 
   /**
@@ -91,15 +94,19 @@ class MediaLibrarySettingType extends PatternSettingTypeBase {
    */
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
     $media_id = $this->getValue($value);
-    if (!empty($media_id)) {
-      $media_id = Media::load($media_id) !== NULL ? $media_id : NULL;
-    }
+
+    $media = $media_id !== NULL ? Media::load($media_id) : NULL;
+    $media_id = $media !== NULL ? $media_id : NULL;
     $form[$def->getName()] = [
       '#type' => 'media_library',
       '#title' => $def->getLabel(),
       '#description' => $def->getDescription(),
       '#default_value' => $media_id,
     ];
+    if ($media !== NULL && $def->getValue('show_edit_button') === TRUE) {
+      $form[$def->getName()]['#ui_patterns_media_edit_button'] = TRUE;
+    }
+
     $allowed_bundles = $def->getValue('allowed_bundles');
     if (!empty($allowed_bundles)) {
       $form[$def->getName()]['#allowed_bundles'] = $allowed_bundles;

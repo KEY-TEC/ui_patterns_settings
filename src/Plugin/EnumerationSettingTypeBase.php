@@ -48,6 +48,19 @@ abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase {
   }
 
   /**
+   * Returns the enumeration options.
+   *
+   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
+   *  The pattern definition.
+   *
+   * @return mixed
+   *   The options.
+   */
+  protected function getOptions(PatternDefinitionSetting $def) {
+    return $def->getOptions();
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, $value, PatternDefinitionSetting $def, $form_type) {
@@ -58,7 +71,7 @@ abstract class EnumerationSettingTypeBase extends PatternSettingTypeBase {
       $options = [];
     }
 
-    $options += $def->getOptions();
+    $options += $this->getOptions($def);
     $form[$def->getName()] = [
       '#type' => $this->getEnumerationType($def),
       '#title' => $def->getLabel(),

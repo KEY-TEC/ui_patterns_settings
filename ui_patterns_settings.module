@@ -5,6 +5,8 @@
  * Contains ui_patterns_settings.module.
  */
 
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Url;
 use Drupal\ui_patterns_settings\Plugin\PatternSettingTypeBase;
 use Drupal\ui_patterns_settings\Plugin\Layout\PatternSettingsLayout;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -14,6 +16,7 @@ use Drupal\ui_patterns\UiPatterns;
 use Drupal\ui_patterns\Definition\PatternDefinition;
 use Drupal\ui_patterns_settings\Form\SettingsFormBuilder;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_ui_patterns_layouts_display_settings_form_alter().
@@ -22,6 +25,62 @@ function ui_patterns_settings_ui_patterns_layouts_display_settings_form_alter(&$
   SettingsFormBuilder::layoutForm($form, $definition, $configuration);
 }
 
+function ui_patterns_settings_build_media_edit_button($media_id) {
+  $media_entity_type = \Drupal::entityTypeManager()->getStorage('media')->getEntityType();
+  $edit_template = $media_entity_type->getLinkTemplate('edit-form');
+  $edit_url_query_params = [
+    'media_library_edit' => 'ajax',
+    'media_library_edit_entity_id' => $media_id,
+  ];
+  $edit_url = Url::fromUserInput(str_replace('{media}', $media_id, $edit_template) . '?' . UrlHelper::buildQuery($edit_url_query_params));
+  $dialog_options = \Drupal\media_library\MediaLibraryUiBuilder::dialogOptions();
+  return [
+    '#type' => 'link',
+    '#title' => '',
+    '#url' => $edit_url,
+    '#attributes' => [
+      'class' => [
+        'js-media-library-edit-link',
+        'media-library-edit__link',
+        'use-ajax',
+      ],
+      'target' => '_blank',
+      'data-dialog-options' => json_encode([
+                                             'height' => $dialog_options['height'],
+                                             'width' => $dialog_options['width'],
+                                             'classes' => ['ui-dialog-content' => 'media-library-edit__modal'],
+                                           ]),
+      'data-dialog-type' => 'dialog',
+    ],
+    '#attached' => [
+      'library' => [
+        'media_library_edit/admin',
+        'core/drupal.dialog.ajax',
+      ],
+    ],
+  ];
+
+}
+/**
+ * Implements hook_preprocess_media_library_element().
+ */
+function ui_patterns_settings_preprocess_media_library_element(&$variables) {
+  $element = $variables['element'];
+  if (isset($element['#ui_patterns_media_edit_button']) && !empty($element['#value']) && isset($variables['content']['selection'])) {
+    foreach (Element::children($variables['content']['selection']) as $child) {
+      $selection = &$variables['content']['selection'][$child];
+      $media_id = $selection['preview']['target_id']['#value'] ?? NULL;
+      if ($media_id !== NULL) {
+        // Remove js-media-library-item
+        if (($key = array_search('js-media-library-item', $selection['#attributes']['class'])) !== false) {
+          unset($selection['#attributes']['class'][$key]);
+        }
+        $selection['media_edit'] = ui_patterns_settings_build_media_edit_button($media_id);
+      }
+    }
+
+  }
+}
 /**
  * Implements hook_form_field_storage_config_edit_form_alter().
  */
