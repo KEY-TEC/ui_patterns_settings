@@ -22,7 +22,7 @@ class LanguageAccessSettingType extends LanguageCheckboxesSettingType {
    * {@inheritdoc}
    */
   public function alterElement($value, PatternDefinitionSetting $def, &$element) {
-    if ($value['current_language_selected'] === FALSE) {
+    if ($this->isLayoutBuilderRoute() === FALSE && $value['current_language_selected'] === FALSE) {
       hide($element);
     }
   }

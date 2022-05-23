@@ -19,7 +19,7 @@ class PublishSettingType extends PatternSettingTypeBase {
    * {@inheritdoc}
    */
   public function alterElement($value, PatternDefinitionSetting $def, &$element) {
-    if ($value === FALSE) {
+    if ($this->isLayoutBuilderRoute() === FALSE && $value === FALSE) {
       hide($element);
     }
   }

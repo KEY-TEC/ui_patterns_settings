@@ -39,6 +39,13 @@ abstract class PatternSettingTypeBase extends PluginBase implements
   private $moduleHandler;
 
   /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  private $routeMatch;
+
+  /**
    * Return pattern definitions for setting .
    *
    * @var \Drupal\ui_patterns\Definition\PatternDefinition
@@ -127,7 +134,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements
     $translation = $container->get('string_translation');
 
     $plugin->setStringTranslation($translation);
-
+    $plugin->routeMatch = $container->get('current_route_match');
     return $plugin;
   }
 
@@ -188,6 +195,18 @@ abstract class PatternSettingTypeBase extends PluginBase implements
     $def = $this->getPatternSettingDefinition();
     $value = $this->settingsPreprocess($value, $context, $def);
     return $value;
+  }
+
+  /**
+   * Checks if current route is a layout builder route.
+   *
+   * @return bool
+   *   True if it is a layout builder route.
+   */
+  protected function isLayoutBuilderRoute() {
+    if (preg_match('/^(layout_builder\.([^.]+\.)?)/', $this->routeMatch->getRouteName())) {
+      return TRUE;
+    }
   }
 
   /**
