@@ -72,6 +72,16 @@ foo_settings:
       options:
         key: value
         key2: value2
+    language_checkboxes:
+      type: language_checkboxes
+      label: Language selection
+    language_access:
+      type: language_access
+      label: Language access
+    publish:
+      type: publish
+      label: Publish
+      default_value: true
     checkboxes:
       type: checkboxes
       label: Checkboxes

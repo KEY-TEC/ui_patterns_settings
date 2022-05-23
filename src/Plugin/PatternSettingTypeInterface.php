@@ -100,4 +100,16 @@ interface PatternSettingTypeInterface extends ConfigurableInterface {
    */
   public function fieldStorageExposableTypes();
 
+  /**
+   * Allow setting types to alter render element.
+   *
+   * @param string $value
+   *   The value.
+   * @param \Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting $def
+   *   The pattern definition.
+   * @param array $element
+   *   The render element.
+   */
+  public function alterElement($value, PatternDefinitionSetting $def, &$element);
+
 }

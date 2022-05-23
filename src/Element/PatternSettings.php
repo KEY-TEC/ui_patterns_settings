@@ -101,7 +101,7 @@ class PatternSettings implements TrustedCallbackInterface {
       }
       $entity = $context->getProperty('entity');
       $variant = isset($element['#variant']) ? $element['#variant'] : NULL;
-      $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $variant, $preview, $entity);
+      $settings = UiPatternsSettings::preprocess($pattern_id, $settings, $variant, $preview, $entity, $element);
       if (isset($element['#layout'])) {
         $alter_context['#layout'] = $element['#layout'];
       }

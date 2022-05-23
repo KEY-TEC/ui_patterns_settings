@@ -90,7 +90,7 @@ class UiPatternsSettings {
    * @return array
    *   The processed settings.
    */
-  public static function preprocess($pattern_id, array $settings, $variant, $preview, EntityInterface $entity = NULL) {
+  public static function preprocess($pattern_id, array $settings, $variant, $preview, EntityInterface $entity = NULL, &$element = NULL) {
     $processed_settings = [];
     $definition = UiPatterns::getPatternDefinition($pattern_id);
     $context = [];
@@ -154,6 +154,7 @@ class UiPatternsSettings {
       }
       $setting_type = UiPatternsSettings::createSettingType($definition, $setting_definition);
       $processed_value = $setting_type->preprocess($value, $context);
+      $setting_type->alterElement($processed_value, $setting_definition, $element);
       $processed_settings[$key] = $processed_value;
     }
     return $processed_settings;

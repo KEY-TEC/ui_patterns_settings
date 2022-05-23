@@ -1,5 +1,5 @@
 {% set configuration = pattern_configuration('foo_settings', '', 'config') %}
-{{ dump(configuration) }}
+{{ dump(language_checkboxes) }}
 <div style="border: 1px solid blue">
     <div class="textfield">Textfield: {{ textfield }}</div>
     <div class="number">Number: {{ number }}</div>
@@ -7,8 +7,9 @@
     <div class="boolean">Boolean: {{ boolean }}</div>
     <div class="url">Url: {{ url }}</div>
     <div class="select">Select: {{ select }}</div>
-    <div class="enumeration">Enumeration: {{ enumeration }}</div>
+  <div class="enumeration">Enumeration: {{ enumeration }}</div>
     <div class="checkboxes">Checkboxes: {% for i in checkboxes %}  {{- i -}} {% endfor %}</div>
+    <div class="language_checkboxes">language_checkboxes: {% for index, language in language_checkboxes.selected %}  {{- index -}}-{{ language }} {% endfor %}</div>
     <div class="attributes">Attributes: {{ attributes }}</div>
     <div class="config">Configuration: {{ configuration }}</div>
     <div class="colorwidget">Colorwidget: {{ colorwidget }}</div>

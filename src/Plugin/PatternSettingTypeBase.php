@@ -193,6 +193,13 @@ abstract class PatternSettingTypeBase extends PluginBase implements
   /**
    * {@inheritdoc}
    */
+  public function alterElement($value, PatternDefinitionSetting $def, &$element) {
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function settingsPreprocess(
     $value,
     array $context,
