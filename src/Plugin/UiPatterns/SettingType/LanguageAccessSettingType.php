@@ -3,6 +3,7 @@
 namespace Drupal\ui_patterns_settings\Plugin\UIPatterns\SettingType;
 
 use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
+use Drupal\ui_patterns_settings\Plugin\LanguageCheckboxesSettingTypeBase;
 
 /**
  * Hides render element for unchecked languages.
@@ -16,7 +17,7 @@ use Drupal\ui_patterns_settings\Definition\PatternDefinitionSetting;
  *   label = @Translation("Language Access")
  * )
  */
-class LanguageAccessSettingType extends LanguageCheckboxesSettingType {
+class LanguageAccessSettingType extends LanguageCheckboxesSettingTypeBase {
 
   /**
    * {@inheritdoc}
