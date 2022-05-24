@@ -207,6 +207,7 @@ abstract class PatternSettingTypeBase extends PluginBase implements
     if (preg_match('/^(layout_builder\.([^.]+\.)?)/', $this->routeMatch->getRouteName())) {
       return TRUE;
     }
+    return FALSE;
   }
 
   /**
