@@ -95,7 +95,8 @@ class UiPatternsSettingsRenderTest extends BrowserTestBase {
     $edit = [
       'ds_layout' => 'pattern_foo_settings',
     ];
-    $this->drupalPostForm('/admin/structure/types/manage/article/display', $edit, 'Save');
+    $this->drupalGet('/admin/structure/types/manage/article/display');
+    $this->submitForm($edit, 'Save');
 
     // Fill settings.
     $edit = [];

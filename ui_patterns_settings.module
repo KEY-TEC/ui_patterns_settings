@@ -33,7 +33,7 @@ function ui_patterns_settings_build_media_edit_button($media_id) {
     'media_library_edit_entity_id' => $media_id,
   ];
   $edit_url = Url::fromUserInput(str_replace('{media}', $media_id, $edit_template) . '?' . UrlHelper::buildQuery($edit_url_query_params));
-  $dialog_options = \Drupal\media_library\MediaLibraryUiBuilder::dialogOptions();
+  $dialog_options = MediaLibraryUiBuilder::dialogOptions();
   return [
     '#type' => 'link',
     '#title' => '',
