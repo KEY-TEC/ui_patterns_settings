@@ -23,8 +23,8 @@ class CheckboxesSettingType extends PatternSettingTypeBase {
     $defined_options = $def->getOptions();
     if (is_array($value)) {
       foreach ($value as $checkbox_key => $checkbox_value) {
-        if ($checkbox_value != "0") {
-          $selected_options[$checkbox_key] = isset($defined_options[$checkbox_value]) ? $defined_options[$checkbox_value] : $checkbox_value;
+        if ($checkbox_value != "0" && isset($defined_options[$checkbox_value])) {
+          $selected_options[$checkbox_key] = $checkbox_value;
         }
       }
     }
