@@ -121,6 +121,13 @@ class PatternSettings implements TrustedCallbackInterface {
           }
           elseif (is_array($element[$key]) && is_array($setting)) {
             $element[$key] = array_merge($element[$key], $setting);
+          } elseif (empty($element[$key]) && !empty($setting)) {
+            // Handle Exposed fields. Overwrite expose fields if the setting is provided
+            // but the variable prefilled with an empty field. (e.g. component blocks)
+            $setting_definition = UiPatternsSettings::getPatternDefinitionSetting(UiPatterns::getPatternDefinition($pattern_id), $name);
+            if ($setting_definition !== NULL && $setting_definition->getExposeAsField()) {
+              $element[$key] = $setting;
+            }
           }
         }
       }
